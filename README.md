@@ -20,7 +20,7 @@ Python, JavaScript, Leaflet, OpenFreeMap, and PapaParse. Hosted free on GitHub P
 ## ArcGIS Online Version
 I first built this project in ArcGIS Online using Experience Builder. [View the ArcGIS version here](https://experience.arcgis.com/experience/6c9635cd96cd43d7bf8bbc86947be050).
 
-The datasets were so large that the server took a long time to load the maps and charts. To fix that, I rebuilt the project from scratch in Python and JavaScript. It now runs right in your browser, so there's no more waiting on a server.
+The datasets were so large that the server took a long time to load the charts. To fix that, I rebuilt the project from scratch in Python and JavaScript. It now runs right in your browser, so there's no more waiting on a server.
 
 ## Data
 Environment and Climate Change Canada water quality monitoring data: [National Long-term Water Quality Monitoring Data](https://data-donnees.az.ec.gc.ca/data/substances/monitor/national-long-term-water-quality-monitoring-data/)
