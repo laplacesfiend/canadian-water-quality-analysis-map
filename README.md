@@ -1,6 +1,6 @@
 # Canadian Water Quality Analysis Map
 
-**Live map:** https://laplacesfiend.github.io/canadian-water-quality-analysis-tool/
+**Live map:** https://laplacesfiend.github.io/canadian-water-quality-analysis-map/
 
 ## What it is
 An interactive map of water testing sites across Canada. Click a site to see which pollutants were measured there. Pick one, and the map tells you if its levels are going up, going down, or staying the same over the years.
