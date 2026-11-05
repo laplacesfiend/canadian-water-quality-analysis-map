@@ -1,0 +1,345 @@
+SITE_NO,SITE_NAME,LATITUDE,LONGITUDE,BASIN_SLUG,BASIN_NAME,BASIN_FILE
+NW10VK0001,RUGGLES RIVER AT OUTLET OF LAKE HAZEN,81.7942,-70.4339,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10TB0002,THOMSEN RIVER AT GREEN CABIN,73.2269,-119.5422,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10UE0002,"OWL RIVER ABOVE DELTA, NEAR MOUTH",66.8928,-64.6883,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10UF0002,WEASEL RIVER NEAR THE MOUTH AT WINDY LAKE,66.3736,-65.4811,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10VK0002,VERY RIVER NEAR INLET LAKE HAZEN,81.6803,-73.1258,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10UF0003,WEASEL RIVER AT SOUTH OUTLET OF SUMMIT LAKE,66.6000,-65.2297,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10VK0004,TURNABOUT RIVER NEAR INLET LAKE HAZEN,81.9372,-69.0828,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10PC0019,COPPERMINE RIVER ABOVE COPPER CREEK,67.2289,-115.8881,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10OB0003,HORNADAY RIVER BELOW UNNAMED EASTERN TRIBUTARY,68.7542,-122.4022,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10VK0003,ABBE RIVER NEAR INLET LAKE HAZEN,81.8439,-71.0769,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+NW10OB0006,HORNADAY RIVER ABOVE LITTLE HORNADAY RIVER,68.3308,-121.9633,arctic-coast-islands-basin,Arctic Coast - Islands Basin,Water-Qual-Eau-Arctic-2000-present.csv
+US05ND0004,SOURIS RIVER NEAR SHERWOOD N.D.,48.9900,-101.9578,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+MA05NF0001,"SOURIS RIVER AT COULTER, MANITOBA",49.0909,-100.9475,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+US05NF0001,SOURIS RIVER NEAR WESTHOPE,48.9997,-100.9000,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+SA05JM0014,QU'APPELLE RIVER APPROX. 3.2KM. SOUTH,50.4839,-101.5431,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+SA05MD0002,ASSINIBOINE RIVER AT HWY 8 BRIDGE,51.5331,-101.8889,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+MA05OB0001,"PEMBINA RIVER AT WINDYGATES, MANITOBA",49.0314,-98.2778,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+MA05OC0001,"RED RIVER AT EMERSON, MANITOBA",49.0081,-97.2106,assiniboine-red-river-basin,Assiniboine - Red River Basin,Water-Qual-Eau-Assiniboine-Red-2000-present.csv
+AL06AD0001,"BEAVER RIVER AT BEAVER CROSSING,",54.3542,-110.2117,churchill-river-basin,Churchill River Basin,Water-Qual-Eau-Churchill-2000-present.csv
+SA06EA0003,CHURCHILL RIVER BELOW WASAWAKASIK,55.6081,-102.1956,churchill-river-basin,Churchill River Basin,Water-Qual-Eau-Churchill-2000-present.csv
+SA06AF0001,COLD RIVER AT OUTLET OF COLD LAKE,54.5667,-109.8361,churchill-river-basin,Churchill River Basin,Water-Qual-Eau-Churchill-2000-present.csv
+BC08NA0033,KICKING HORSE RIVER AT FIELD IN YOHO NATIONAL PARK,51.39623,-116.49188,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NE0001,COLUMBIA RIVER AT WANETA,49.02837,-117.60406,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NK0003,ELK RIVER ABOVE HIGHWAY 93,49.17970,-115.16702,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NH0005,"KOOTENAY RIVER ABOVE HIGHWAY 3, NEAR CRESTON",49.11690,-116.57944,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NN0021,KETTLE RIVER AT GRAND FORKS,49.01970,-118.47472,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NF0001,KOOTENAY RIVER ABOVE HIGHWAY 93 IN KOOTENAY NATIONAL PARK,50.88697,-116.04585,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08ND0003,ILLECILLEWAET RIVER ABOVE HIGHWAY 1 IN GLACIER NATIONAL PARK,51.21327,-117.69583,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NG0013,KOOTENAY RIVER ABOVE BULL RIVER,49.47389,-115.48639,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NE0029,PEND D'OREILLE RIVER AT WANETA,49.00461,-117.61210,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NA0048,COLUMBIA RIVER AT NICHOLSON,51.24375,-116.91196,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NK0004,ELK RIVER BELOW SPARWOOD,49.66430,-114.90410,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NN0011,KETTLE RIVER AT MIDWAY,49.00470,-118.77615,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08ND0004,WOOLSEY CREEK ABOVE HIGHWAY 1 IN MOUNT REVELSTOKE NATIONAL PARK,51.11742,-117.89280,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NG0009,KOOTENAY RIVER NEAR FENWICK STATION,49.52790,-115.54918,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NE0005,COLUMBIA RIVER AT BIRCHBANK,49.17790,-117.71710,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08NB0002,BEAVER RIVER ABOVE HIGHWAY 1 IN GLACIER NATIONAL PARK,51.38336,-117.44908,columbia-river-basin,Columbia River Basin,Water-Qual-Eau-Columbia-2000-present.csv
+BC08KA0007,FRASER RIVER AT RED PASS,52.98991,-119.01397,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MH0269,"NORTH ALOUETTE RIVER AT 132ND AVE BRIDGE, NEAR MAPLE RIDGE",49.24187,-122.59572,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LF0080,THOMPSON RIVER AT COOKS LANDING RD,50.41890,-121.34940,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MB0007,CHILCOTIN RIVER AT CHRISTIE ROAD BRIDGE,52.07200,-123.26137,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08KH0014,QUESNEL RIVER AT LIKELY ROAD BRIDGE,52.61550,-121.57268,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LF0078,THOMPSON RIVER AT SPENCES BRIDGE - NORTH BANK,50.42026,-121.34871,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MC0001,FRASER RIVER AT MARGUERITE,52.52938,-122.44635,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08KH0012,HORSEFLY RIVER ABOVE QUESNEL LAKE,52.40231,-121.43281,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LF0001,THOMPSON RIVER AT SPENCES BRIDGE,50.42083,-121.34139,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MF0001,FRASER RIVER AT HOPE,49.38629,-121.45237,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08KH0013,QUESNEL RIVER AT GRAVELLE FERRY BRIDGE,52.84245,-122.22476,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MH0027,SUMAS RIVER AT INTERNATIONAL BOUNDARY,49.00240,-122.23230,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08MH0453,FRASER RIVER (MAIN ARM) AT GRAVESEND REACH - BUOY,49.14860,-123.03859,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LG0001,NICOLA RIVER AT THE MOUTH,50.42484,-121.31596,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LC0005,SHUSWAP RIVER ABOVE MARA LAKE,50.68480,-119.06999,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08LE0004,"SALMON RIVER AT HIGHWAY 1 BRIDGE, NEAR SALMON ARM",50.69261,-119.33035,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+BC08KE0010,NECHAKO RIVER AT PRINCE GEORGE,53.92717,-122.76674,fraser-river,Fraser River,Water-Qual-Eau-Fraser-2000-present.csv
+NF02XA0001,LITTLE MECATINA RIVER ABOVE LAKE FOURMONT,52.2283,-61.3225,north-shore-gaspe-basin,North Shore - Gaspé Basin,Water-Qual-Eau-Gaspé-2000-present.csv
+NF02XB0018,TRIBUTARY TO ST. AUGUSTINE RIVER,52.5518,-59.3275,north-shore-gaspe-basin,North Shore - Gaspé Basin,Water-Qual-Eau-Gaspé-2000-present.csv
+NW06MA0001,THELON RIVER BELOW OUTLET OF SCHULTZ LAKE,64.7731,-97.0678,keewatin-southern-baffin-island,Keewatin - Southern Baffin Island,Water-Qual-Eau-Keewatin-Baffin-2000-present.csv
+NW06OA0001,BROWN RIVER AT OUTLET OF BROWN LAKE,65.9356,-91.0664,keewatin-southern-baffin-island,Keewatin - Southern Baffin Island,Water-Qual-Eau-Keewatin-Baffin-2000-present.csv
+NW10ED0001,LIARD RIVER AT FORT LIARD,60.2431,-123.4792,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+BC10DA0002,PETITOT RIVER BELOW HIGHWAY 77,59.98376,-122.92732,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0014,PRAIRIE CREEK AT THE MOUTH,61.2839,-124.4464,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10MC0001,PEEL RIVER ABOVE FORT MCPHERSON,67.2206,-134.9456,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+YT10AA0001,LIARD RIVER AT UPPER CROSSING,60.05070,-128.90434,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10ED0002,LIARD RIVER NEAR THE MOUTH,61.7395,-121.2192,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW07RD0001,LOCKHART RIVER AT OUTLET OF ARTILLERY LAKE,62.8889,-108.4717,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0017,SOUTH NAHANNI RIVER ABOVE NAHANNI,61.0989,-123.5900,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0020,PRAIRIE CREEK ABOVE CADILLAC MINE,61.6047,-124.8172,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10JC0001,GREAT BEAR RIVER AT OUTLET OF GREAT BEAR LAKE,65.1356,-123.5139,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+YT10MA0011,OGILVIE RIVER ABOVE ENGINEER CREEK,65.35810,-138.30556,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0006,PRAIRIE CREEK 0.25 MILES DOWNSTREAM OF,61.5467,-124.7889,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EA0008,FLAT RIVER AT PARK BOUNDARY,61.4278,-126.6300,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+YT10MD0001,FIRTH RIVER NEAR THE MOUTH,69.5333,-139.9500,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0019,PRAIRIE CREEK NEAR NAHANNI NPR BOUNDARY,61.3478,-124.4164,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10FB0006,MACKENZIE RIVER AT STRONG POINT,61.8181,-120.7903,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10LA0003,MACKENZIE RIVER ABOVE ARCTIC RED RIVER,67.4561,-133.7369,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EA0004,FLAT RIVER NEAR THE MOUTH,61.5331,-125.4056,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10RC0002,MEADOWBANK RIVER ABOVE NANAU LAKE,65.4658,-95.8811,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW07OB0002,HAY RIVER NEAR ALBERTA/NWT BORDER,60.0042,-116.9692,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EB0016,SOUTH NAHANNI RIVER ABOVE VIRGINIA FALLS,61.6364,-125.7967,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10EC0021,PRAIRIE CREEK AT NEW NNPR BOUNDARY,61.5217,-124.7125,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NW10KA0001,MACKENZIE RIVER AT NORMAN WELLS,65.2817,-126.8492,lower-mackenzie-river-basin,Lower Mackenzie River Basin,Water-Qual-Eau-Mackenzie-2000-present.csv
+NS01EJ0001,"SACKVILLE RIVER AT HIGHWAY 1 BRIDGE, BEDFORD",44.7303,-63.6631,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FC0013,FRENCH LAKE CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA,46.7278,-60.8653,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BR0114,KOUCHIBOUGUACIS RIVER ABOVE RUISSEAU À LA TRUITE - ALSO KNOWN AS ST. IGNACE,46.6999,-65.0847,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01DR0001,SOUTH RIVER AT ST. ANDREWS,45.5578,-61.9039,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0048,LOON LAKE,44.3167,-65.1914,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BR0087,"RANKIN BROOK, NORTH BRANCH",46.8114,-65.075,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0031,"ROUND LAKE, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA",46.8056,-60.5078,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0045,BRANCH POND 150 M OF MARY ANN BROOK; CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA,46.7417,-60.4542,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0078,COBRIELLE LAKE IN MIDDLE OF LAKE,44.3164,-65.2328,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01DC0203,SOUTH ANNAPOLIS RIVER,45.0017,-64.8223,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0089,BROAD COVE MOUNTAIN LAKE,46.732,-60.39,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BR0112,TWEEDIE BROOK NEAR HIGHWAY BRIDGE AT TWEEDIE BROOK,46.7822,-65.1347,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EN0006,HOOPER LAKE,45.0211,-62.0544,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EA0001,TUSKET RIVER AT WILSON'S BRIDGE,43.9242,-65.8667,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0094,PESKAWA LAKE IN MIDDLE OF LAKE,44.3178,-65.3622,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0067,BACK LAKE IN MIDDLE OF LAKE,44.2931,-65.2678,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BV0168,WOLFE LAKE,45.6581,-65.1397,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0086,CHANNEL LAKE IN MIDDLE OF TOP PART OF LAKE,44.4256,-65.3097,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0046,"GLASGOW LAKE, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA",46.8192,-60.4917,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+PE01CA0001,MILL RIVER AT WATER SURVEY OF CANADA (WSC) GAUGE IN BLOOMFIELD PARK,46.7442,-64.1817,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0080,BIG RED LAKE,44.3494,-65.3828,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FB0001,NORTHEAST MARGAREE RIVER AT BRIDGE (WSC GAUGE),46.3656,-60.975,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BR0008,"BLACK RIVER AT HIGHWAY 117 COVERED BRIDGE, CLAIRE FONTAINE",46.8381,-64.9917,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0048,MICA HILL LAKE 50 M EAST OF LARGE ISLAND,46.8146,-60.4429,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FC0019,PRESQU'ÎLE POND,46.6897,-60.9583,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0051,FRESHWATER LAKE,46.645,-60.3969,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0070,BIG DAM WEST LAKE IN MIDDLE OF LAKE,44.4608,-65.2939,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BV0167,BENNET LAKE,45.6272,-65.078,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+PE01CB0143,WILMOT RIVER NEAR KELVIN GROVE,46.3933,-63.6586,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EE0014,MOOSE PIT BROOK AT OUTFLOW TO TUPPER LAKE,44.4619,-65.0483,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0101,BEAVERSKIN LAKE IN MIDDLE OF WEST PART OF LAKE,44.3078,-65.3331,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EC0005,"ROSEWAY RIVER (WSC GAUGE), LOWER OHIO",43.8381,-65.3694,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0075,PESKOWESK LAKE 425 M NORTH-WEST OF TIP OF ISLE DE L'ORIGNAL,44.3167,-65.2828,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EJ0157,LITTLE SACKVILLE RIVER,44.7645,-63.6876,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0111,PINE MARTEN STREAM AT FOREST ROAD ABOVE CULVERT,44.4264,-65.2128,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0073,BIG DAM EAST LAKE IN MIDDLE OF LAKE,44.4533,-65.2686,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0047,"JOHN DEE LAKE 100 M EAST OF ISLAND, CAPE BRETON HIGHLANDS NATIONAL PARK",46.8006,-60.5175,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+PE01CD0050,BEAR RIVER AT ST. MARGARETS,46.4531,-62.3825,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FC0032,SUGAR BROOK LAKES,46.796,-60.794,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0010,PEBBLELOGGITCH LAKE IN MIDDLE OF LAKE,44.3014,-65.3514,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0076,GRAFTON LAKE IN CENTRE OF LAKE,44.3858,-65.1775,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0007,KEJIMKUJIK LAKE 200 M SOUTH-WEST OF PEALE ISLAND,44.3692,-65.2206,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FC0004,CHETICAMP RIVER ABOVE ROBERT BROOK (WSC GAUGE),46.6428,-60.9439,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NB01BR0006,"PORTAGE RIVER AT HIGHWAY 117, LOWER SAPIN",46.9275,-64.9106,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0040,WARREN LAKE 100 M SOUTH POINT CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA,46.7139,-60.3939,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01DD0016,CORNWALLIS RIVER AT BRIDGE 850 M NORTH OF HIGHWAY 1,45.0647,-64.6358,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EF0002,"LAHAVE RIVER AT WEST NORTHFIELD BRIDGE ON BRUHM ROAD, (WSC GAUGE)",44.4467,-64.5917,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0110,LOWER PINE MARTEN BOG AT OUTFLOW,44.4236,-65.2133,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0015,LAKE OF ISLANDS CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA,46.7481,-60.5244,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0005,MERSEY RIVER BELOW MILL FALLS SOUTH-WEST OF MAITLAND BRIDGE,44.4367,-65.2228,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0085,FROZEN OCEAN LAKE IN MIDDLE OF LAKE,44.4519,-65.3456,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01DC0001,"ANNAPOLIS RIVER, AT BRIDGE 650 M SOUTH OF HIGHWAY 1 (WSC GAUGE)",44.9492,-65.0292,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01EO0001,"ST. MARY'S RIVER AT HIGHWAY 7 BRIDGE, STILLWATER",45.1739,-61.98,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01FD0039,"LONG POND, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA",46.7128,-60.4436,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0047,GEORGE LAKE,44.3403,-65.2206,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0004,MOUNTAIN LAKE IN CENTRE OF NORTH PART OF LAKE,44.3278,-65.2639,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0083,LIBERTY LAKE IN MIDDLE OF LAKE,44.3856,-65.4267,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+NS01ED0095,UPPER SILVER LAKE IN MIDDLE OF SOUTH BASIN,44.2828,-65.2467,maritime-coastal-basin,Maritime Coastal Basin,Water-Qual-Eau-Maritime-2000-present.csv
+AL11AA0003,MILK RIVER AT EASTERN CROSSING OF INTL BOUNDARY,49.1242,-110.8942,missouri-river-basin,Missouri River Basin,Water-Qual-Eau-Missouri-2000-present.csv
+AL11AA0002,MILK RIVER AT WESTERN CROSSING OF INTL BOUNDARY,49.0895,-112.4017,missouri-river-basin,Missouri River Basin,Water-Qual-Eau-Missouri-2000-present.csv
+AL05DA0001,NORTH SASKATCHEWAN RIVER AT WHIRLPOOL POINT,52.0028,-116.4717,north-saskatchewan-river-basin,North Saskatchewan River Basin,Water-Qual-Eau-N-Saskatchewan-2000-present.csv
+SA05FE0001,"BATTLE RIVER NEAR UNWIN, SASKATCHEWAN",52.9403,-109.8731,north-saskatchewan-river-basin,North Saskatchewan River Basin,Water-Qual-Eau-N-Saskatchewan-2000-present.csv
+AL05EF0003,NORTH SASKATCHEWAN RIVER AT HIGHWAY #17 BRIDGE,53.6014,-110.0081,north-saskatchewan-river-basin,North Saskatchewan River Basin,Water-Qual-Eau-N-Saskatchewan-2000-present.csv
+NF02YS0021,"BOG POND, TERRA NOVA NATIONAL PARK",48.4942,-54.1331,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YQ0030,GANDER RIVER AT APPLETON,48.9944,-54.8675,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YE0004,PORTLAND CREEK AT ROUTE 430,50.1817,-57.6036,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZC0020,BUCK LAKE ON ROUTE 480,48.0133,-57.6664,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0016,"NAMELESS POND  NO. 2, NEAR SOUTH BROAD COVE",48.5497,-53.8497,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YK0022,HUMBER CANAL AT MAIN DAM ROAD,49.1661,-57.4156,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0015,"UNNAMED POND, 6 KM NORTH-EAST OF BAD WEATHER POND",49.4608,-57.525,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YG0020,EAGLE MOUNTAIN BROOK BELOW EAGLE MOUNTAIN POND,49.8315,-57.2868,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0016,RENNIE'S RIVER AT CARNELL DRIVE,47.5778,-52.7008,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0029,WILD COVE BROOK AT ROUTE 440,48.9744,-57.8839,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0045,"JAY POND, TERRA NOVA NATIONAL PARK",48.6367,-53.8842,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0020,BROAD COVE BROOK NEAR ST. PHILLIPS,47.5872,-52.8814,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZK0005,NORTHEAST RIVER 4.7 KM EAST OF DUNVILLE,47.2731,-53.8403,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZN0004,SALMONIER RIVER AT ST. CATHERINES,47.1911,-53.3867,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0029,"LONG WATERS (SOUTH), TERRA NOVA NATIONAL PARK",48.4581,-54.0556,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0142,CORDUROY BROOK NEAR CENTENNIAL PARK,48.9392,-55.6631,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0009,WATERFORD RIVER AT KILBRIDE,47.5294,-52.7414,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03QC0001,EAGLE RIVER ABOVE FALLS,53.5342,-57.495,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZL0029,GOULDS BROOK NEAR MAKINSONS,47.5047,-53.2911,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0065,"SHALLOW POND NO. 3, TERRA NOVA NATIONAL PARK",48.5042,-53.825,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YE0005,WESTERN BROOK AT ROUTE 430,49.8303,-57.8564,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0014,VIRGINIA RIVER AT THE BOULEVARD,47.5839,-52.6914,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0029,GRAND LAKE OUTFLOW AT NORTH WEST RIVER,53.5217,-60.1419,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0011,TERRA NOVA RIVER AT SPENCER BRIDGE,48.6406,-54.0361,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0018,LOMOND RIVER AT ROUTE 431,49.4019,-57.7303,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0030,SEAL LAKE AT NARROWS,54.3319,-61.6408,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0037,CACHE RIVER AT TLH,53.1925,-62.2031,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03QA0045,KENAMU RIVER NEAR MOUTH,53.4761,-59.9169,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0033,BIG POND BROOK BELOW BIG POND,53.5119,-60.2919,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0143,EXPLOITS RIVER AT BOND BRIDGE,49.0231,-55.4481,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03QC0002,ALEXIS RIVER NEAR PORT HOPE SIMPSON,52.6489,-56.8714,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0098,VIRGINIA RIVER AT HEADWATERS,47.5983,-52.7583,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0107,EXPLOITS RIVER NEAR MILLERTOWN,48.7594,-56.5919,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0030,MINIPI RIVER BELOW MINIPI LAKE,52.6147,-61.1864,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0176,SOUTH BROOK AT MOUTH,47.5281,-52.7467,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0028,CAPE CARIBOU RIVER AT GRAND LAKE,53.6211,-60.4144,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0113,"YUDLE POND, TERRA NOVA NATIONAL PARK",48.4383,-54.0339,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0001,CHURCHILL RIVER ABOVE UPPER MUSKRAT FALLS,53.2478,-60.7892,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZA0006,GRAND CODROY RIVER BELOW OVERFALL BROOK,47.8694,-59.1181,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0013,UNNAMED LAKE 3.5 KM SOUTH-SOUTH-EAST OF TEN MILE POND,49.5967,-57.7333,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0020,"PINE HILL POND, TERRA NOVA NATIONAL PARK",48.6042,-53.9775,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03QA0044,CARTER BASIN OUTFLOW,53.4978,-59.8736,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YN0001,LLOYDS RIVER AT ROUTE 480,48.3044,-57.7186,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0037,WUCHUSK LAKE AT NASKAUPI RIVER INFLOW,54.3953,-61.7858,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0020,EXPLOITS RIVER AT ASPEN BROOK,48.9492,-55.9156,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0178,LEARYS BROOK AT PRINCE PHILIP DRIVE,47.5725,-52.7392,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0035,DOMINION LAKE OUTFLOW,52.7289,-61.754,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0183,KELLIGREWS RIVER AT KELLIVIEW CRESCENT,47.4958,-53.0175,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0083,NORTHWEST RIVER AT TERRA NOVA NATIONAL PARK,48.3956,-54.1981,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0359,PADDY'S POND AT OUTLET,47.488,-52.8941,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0025,NASKAUPI RIVER BELOW NASKAUPI LAKE,54.1317,-61.4292,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OD0012,WILSON RIVER EAST BRANCH,53.3092,-62.9197,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0135,PINE HILL POND,48.604,-53.9745,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0004,WATERFORD RIVER AT COMMONWEALTH AVENUE,47.5219,-52.8081,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03PB0032,SUSAN RIVER NORTH OF BEAVER RIVER,53.7381,-60.9467,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OA0020,ASHUANIPI RIVER AT FERGUSON BAY,53.0017,-66.2416,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0001,TERRA NOVA RIVER AT TERRA NOVA,48.5075,-54.2117,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0175,WATERFORD RIVER AT BROOKFIELD ROAD,47.5261,-52.7633,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0185,SOUTH BROOK AT HEADWATERS,47.4936,-52.8506,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03NF0013,UGJOKTOK RIVER BELOW HARP LAKE,55.2333,-61.2992,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0013,CORNER BROOK AT MARGARET BOWATER PARK,48.9444,-57.9367,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0035,WILD COVE BROOK 1.7 KM UPSTREAM OF ROUTE 440,48.9778,-57.8664,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0003,"RATTLE POND, TERRA NOVA NATIONAL PARK",48.5136,-53.8244,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0001,EXPLOITS RIVER AT GRAND FALLS,48.9306,-55.6669,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0015,QUIDI VIDI LAKE AT OUTLET,47.5839,-52.6808,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0012,HUMBER RIVER AT HUMBER VILLAGE BRIDGE,48.9836,-57.7611,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0069,"OCHRE HILL PONDS (NORTH), TERRA NOVA NATIONAL PARK",48.5025,-53.9639,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0180,VIRGINIA RIVER AT NEWFOUNDLAND DRIVE,47.5997,-52.7006,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0181,WATERFORD RIVER AT BLACKHEAD ROAD,47.5481,-52.7192,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0025,UNNAMED LAKE 1.5 KM EAST OF HARDING POND,49.5622,-57.7264,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0026,"UNNAMED POND, 3 KM NORTH-EAST OF KILLDEVIL HILL",49.5236,-57.7111,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0048,"MOSES COVE POND, TERRA NOVA NATIONAL PARK",48.5967,-53.7544,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0111,BLUEHILL POND TERRA NOVA NATIONAL PARK,48.6001,-53.9263,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0106,SOUTH BROOK AT PASADENA BEACH,49.0212,-57.6118,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0177,RENNIE'S RIVER AT PORTUGAL COVE ROAD BRIDGE,47.5744,-52.71,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YH0014,UNNAMED LAKE 3.8 KM NORTH-NORTH-EAST OF BADWEATHER POND,49.4372,-57.5317,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YJ0004,PINCHGUT BROOK AT TCH,48.7975,-58.0619,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YN0043,PETER STRIDES LAKE AT ROUTE 480,48.1536,-57.7233,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OD0011,EAST METCHIN RIVER AT TLH,53.4353,-63.2342,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YL0011,HUMBER RIVER AT LITTLE FALLS BRIDGE,49.3483,-57.2353,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0070,"CHATMAN PONDS WEST , TERRA NOVA NATIONAL PARK",48.4942,-53.9842,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0032,PINUS RIVER ABOVE TLH,53.1478,-61.5586,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0179,TRIBUTARY TO VIRGINIA RIVER AT GUZZWELL DRIVE,47.5964,-52.7017,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OC0012,ATIKONAK RIVER ABOVE PANCHIA LAKE,52.9694,-64.6622,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YQ0072,CARELESS BROOK AT RESOURCE ROAD STEEL BRIDGE,48.9021,-54.9939,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0112,"MINCHINS POND, TERRA NOVA NATIONAL PARK",48.5581,-53.8826,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YG0001,MAIN RIVER AT ROUTE 420,49.7694,-56.9042,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0134,OPERATIONS COMPOUND,48.5584,-53.9747,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YS0136,TROUT POND,48.4527,-54.0144,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0294,MANUELS RIVER ABOVE MANUELS ACCESS ROAD,47.5197,-52.9447,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02YO0128,EXPLOITS RIVER BELOW GRAND FALLS,48.9367,-55.6181,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF03OE0029,CHURCHILL RIVER ABOVE GRIZZLE FALLS,52.9701,-61.4454,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0109,MUNDY POND AT OUTLET,47.5517,-52.7439,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+NF02ZM0182,WATERFORD RIVER AT BREMIGANS POND DAM,47.5186,-52.8558,newfoundland-and-labrador,Newfoundland and Labrador,Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv
+BC08NM0160,MISSION CREEK AT LAKESHORE ROAD BRIDGE,49.84290,-119.48770,okanagan-similkameen-river-basin,Okanagan - Similkameen River Basin,Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv
+BC08NL0005,SIMILKAMEEN RIVER NEAR INTERNATIONAL BOUNDARY,49.07880,-119.70983,okanagan-similkameen-river-basin,Okanagan - Similkameen River Basin,Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv
+BC08NL0001,SIMILKAMEEN RIVER AT PRINCETON,49.45907,-120.50393,okanagan-similkameen-river-basin,Okanagan - Similkameen River Basin,Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv
+BC08NM0001,"OKANAGAN RIVER AT ROAD 18 BRIDGE, NEAR OLIVER",49.11453,-119.56620,okanagan-similkameen-river-basin,Okanagan - Similkameen River Basin,Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv
+QU02LB9001,"OTTAWA RIVER, DOWNSTREAM OF THE CARILLON DAM",45.5676,-74.3799,ottawa-river-basin,Ottawa River Basin,Water-Qual-Eau-Ottawa-Outaouais-2000-present.csv
+YT08AB0009,ALSEK RIVER ABOVE BATES RIVER IN KLUANE NATIONAL PARK,60.11750,-137.97760,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+YT08AA0010,DEZADEASH RIVER AT HAINES JUNCTION,60.74788,-137.50637,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08FC0001,DEAN RIVER AT ANAHIM LAKE,52.46730,-125.29104,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08EF0001,SKEENA RIVER AT USK,54.63460,-128.40897,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08HB0018,TSOLUM RIVER BELOW MUREX CREEK,49.80870,-125.19480,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08HB0019,ENGLISHMAN RIVER AT PARKSVILLE,49.31622,-124.28525,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08HA0018,COWICHAN RIVER BELOW SOMENOS CREEK,48.77260,-123.66330,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08HB0027,TSOLUM RIVER NEAR COURTNEY,49.70350,-125.00480,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08CG0001,ISKUT RIVER BELOW JOHNSON RIVER,56.73780,-131.67550,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08HD0004,QUINSAM RIVER AT THE MOUTH,50.03631,-125.29459,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+AK08DC0001,"SALMON RIVER NEAR HYDER, ALASKA",55.92540,-130.03550,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08EE0009,BULKLEY RIVER AT SMITHERS,54.78920,-127.15520,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC08GA0010,CHEAKAMUS RIVER ABOVE DAISY LAKE FOREST ROAD,50.05890,-123.09678,pacific-coastal-basin,Pacific Coastal Basin,Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv
+BC07FD0005,PEACE RIVER ABOVE ALCES RIVER,56.12610,-120.05640,peace-athabasca-river-basin,Peace - Athabasca River Basin,Water-Qual-Eau-Peace-Athabasca-2000-present.csv
+BC07FB0005,MURRAY RIVER NEAR THE MOUTH,55.55260,-121.20350,peace-athabasca-river-basin,Peace - Athabasca River Basin,Water-Qual-Eau-Peace-Athabasca-2000-present.csv
+AL07AA0023,ATHABASCA RIVER AT HIGHWAY #16 BELOW SNARING RIVER,53.0417,-118.0870,peace-athabasca-river-basin,Peace - Athabasca River Basin,Water-Qual-Eau-Peace-Athabasca-2000-present.csv
+AL07AA0015,ATHABASCA RIVER ABOVE ATHABSCA FALLS,52.6642,-117.8806,peace-athabasca-river-basin,Peace - Athabasca River Basin,Water-Qual-Eau-Peace-Athabasca-2000-present.csv
+AL05BA0011,BOW RIVER AT HIGHWAY 1 ABOVE LAKE LOUISE,51.4431,-116.2117,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+AL05BE0013,BOW RIVER ABOUT 4.5 KM ABOVE CANMORE,51.1228,-115.3867,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+AL05AK0001,"SOUTH SASKATCHEWAN RIVER AT HWY 41,",50.7375,-110.0956,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+AL05AD0005,WATERTON RIVER AT HWY 6 BRIDGE NEAR WATERTON LAKES,49.1139,-113.8389,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+AL05AD0060,"BELLY RIVER AT HIGHWAY #6, WATERTON LAKES NP",49.0517,-113.6853,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+AL05CK0001,"RED DEER RIVER NEAR BINDLOSS, ALBERTA",50.9028,-110.2967,south-saskatchewan-river-basin,South Saskatchewan River Basin,Water-Qual-Eau-S-Saskatchewan-2000-present.csv
+MA05KH0001,SASKATCHEWAN RIVER ABOVE CARROT RIVER,53.8417,-101.3342,lower-saskatchewan-nelson-river-basin,Lower Saskatchewan - Nelson River Basin,Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv
+SA05LC0001,"RED DEER RIVER AT ERWOOD,",52.8667,-102.1831,lower-saskatchewan-nelson-river-basin,Lower Saskatchewan - Nelson River Basin,Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv
+SA05KH0002,"CARROT RIVER NEAR TURNBERRY,",53.6000,-102.1167,lower-saskatchewan-nelson-river-basin,Lower Saskatchewan - Nelson River Basin,Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv
+QU02OA0207,ILE SAINTE-THÉRÈSE,45.6745,-73.4592,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OD9039,"LAKE SAINT-PIERRE OUTLET, SOUTH SHORE",46.2717,-72.6193,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OF3005,SAINT-FRANÇOIS RIVER'S MOUTH,46.066,-72.8093,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU03ED9402,"GRANDE RIVIÈRE DE LA BALEINE, AT PK8 (8 KIM UPSTREAM OF KUUJJUARAPIK)",55.2792,-77.6428,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0054,JOHN SAURO POND AT VENISE EN QUÉBEC,45.0745,-73.163,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OB0067,PARC LE ROCHER AT SAINT-AMABLE,45.6456,-73.3293,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OE3002,MAGOG RIVER AT LAKE MEMPHRÉMAGOG OUTLET,45.2657,-72.1557,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0052,"RICHELIEU RIVER, WATER INTAKE OF SOREL 'S WATER FILTRATION PLANT",46.034,-73.1176,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OG3007,"YAMASKA RIVER, BRIDGE ON THE ROAD 132",46.0051,-72.9101,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OA0204,À L'ORME RIVER,45.4444,-73.9159,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OF3004,SAINT-FRANÇOIS RIVER IN PIERREVILLE,46.0664,-72.8122,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OG3008,"YAMASKA RIVER AT  ROAD 116 BRIDGE, SAINT-HYACINTHE",45.6284,-72.9397,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+ON02MC0032,"ST. LAWRENCE RIVER, WATER INTAKE OF CORNWALL'S WATER FILTRATION PLANT",45.0138,-74.7908,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0001,RICHELIEU RIVER NEAR THE TOWN OF LACOLLE,45.0614,-73.3325,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OA0440,STATION 120 M FROM SOUTH SHORE OF WOLFE ISLAND AT BANFORD POINT,44.2063,-76.2379,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OA0206,ILES-DE-BOUCHERVILLE,45.5966,-73.4997,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OD9009,"ST. LAWRENCE RIVER, WATER INTAKE OF BÉCANCOUR'S WATER FILTRATION PLANT",46.3116,-72.546,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02NG3013,"SAINT-MAURICE RIVER, WATER INTAKE OF TROIS-RIVIÈRES 'S WATER FILTRATION PLANT",46.382,-72.6105,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02NG3020,"RIVIÈRE À LA PÊCHE, STATION CABIN RPA001 (LA MAURICIE NATIONAL PARK)",46.6776,-72.8652,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0055,L'ACADIE RIVER,45.3528,-73.3641,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU03DC0001,LA GRANDE RESERVOIR,53.7875,-77.4413,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0053,RUISSEAU FAIRBANKS AT NOTRE-DAME DU MONT CARMEL,45.0176,-73.3553,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OA0125,CHÂTEAUGUAY RIVER'S MOUTH,45.3769,-73.7511,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OA0205,MEADOWBROOK BROOK,45.4251,-73.8703,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OB9004,"ST. LAWRENCE RIVER, WATER INTAKE OF LAVALTRIE'S WATER FILTRATION PLANT",45.8744,-73.2806,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OG3010,CHIBOUET RIVER AT  SAINT-HUGUES,45.7908,-72.8258,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OD3004,NICOLET RIVER IN NICOLET,46.2454,-72.6512,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OB0066,"ST. LAWRENCE RIVER, ÎLE DE LA COMMUNE, CHENAL LA PASSE (BOUCHERVILLE ISLANDS)",45.6187,-73.4723,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OC3000,"LAKE SAINT-PIERRE OUTLET, NORTH SHORE",46.2802,-72.6581,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OG3009,"NOIRE RIVER AT ROAD 235 BRIDGE, SAINT-PIE",45.4954,-72.9042,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OB0068,BOISÉ DU TREMBLAY AT LONGUEUIL - SITE 1,45.534,-73.4257,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02101021,YAMACHICHE RIVER- OUTLET,46.2661,-72.8065,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OD9034,"ST. LAWRENCE RIVER  PORT ST-FRANÇOIS, 65 M FROM THE SOUTH SHORE",46.2728,-72.62,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02PH9025,COMMISSAIRE BROOK,46.8742,-71.2924,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OJ0059,ST. LAWRENCE RIVER NEAR CONTRECOEUR,45.8522,-73.248,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02PH9024,"ST. LAWRENCE RIVER, WATER INTAKE OF LÉVIS'S WATER FILTRATION PLANT",46.8071,-71.19,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02PK9000,"BECANCOUR, SOUTH SHORE",46.3835,-72.4092,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU03KE0002,"KOKSOAK RIVER, 8 KM SOUTH-WEST OF KUUJJUAQ",58.0388,-68.4614,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02PH9065,ILE D'ORLÉANS,46.8403,-71.1326,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+QU02OB0069,BOISÉ DU TREMBLAY AT LONGUEUIL - SITE 2,45.5371,-73.4243,saint-lawrence-river-basin,Saint Lawrence River Basin,Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv
+NB01AP0380,CANAAN RIVER,46.0722,-65.3664,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AL0036,"NASHWAAK RIVER ABOVE MARYSVILLE BRIDGE, RTE 8",45.9793,-66.591,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AP0241,KENNEBECASIS RIVER ABOVE BLOOMFIELD BRIDGE,45.5801,-65.7567,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AR0151,"FOREST CITY, MAINE",45.6641,-67.7336,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AO0042,"JEMSEG RIVER AT OLD BRIDGE ABUTMENT, (WATER SURVEY OF CANADA GAUGE)",45.8292,-66.1169,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AD0005,SAINT JOHN RIVER AT EDMUNDSTON,47.3608,-68.3254,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AK0047,NACKAWIC STREAM,46.0468,-67.2427,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AK0157,"SAINT JOHN RIVER BELOW UPPER QUEENSBURY, RTE 105",45.9774,-67.173,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AF0084,"SAINT JOHN RIVER BELOW ST. BASILE, RTE 144",47.3549,-68.2318,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AN0032,SALMON RIVER,46.2906,-65.7225,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AJ0126,MEDUXNEKEAG RIVER AT NEW WSC GAUGE LOCATION,46.216,-67.728,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AG0008,"AROOSTOOK RIVER ABOVE BRIDGE, RTE 2",46.8216,-67.7341,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AQ0003,"LEPREAU RIVER ABOVE BRIDGE, ROUTE 780",45.1697,-66.468,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AJ0008,PRESQU'ÎLE RIVER AT TRACEY MILLS ABOVE OLD DAM,46.4394,-67.7444,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AH0019,"TOBIQUE RIVER BELOW ARTHURETTE BRIDGE, RTE 109",46.783,-67.511,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AJ0067,"BIG PRESQUE ISLE STREAM ABOVE BRIDGE, RTE 103",46.3998,-67.6106,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+00BR01AP0067,"SAINT JOHN RIVER EVANDALE, RTE 102",45.5926,-66.0269,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AD0063,SAINT JOHN RIVER NEAR DICKEY BRIDGE MAINE,47.113,-69.0896,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AR0001,UPSTREAM MILLTOWN DAM,45.1698,-67.2989,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AR0021,ST. CROIX RIVER AT MILLTOWN CANADIAN SIDE,45.1756,-67.2928,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AD0062,ST FRANÇOIS NEAR WATER SURVEY SITE,47.2062,-68.9563,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AF0178,SAINT JOHN RIVER NEAR GRAND FALLS,47.0043,-67.7258,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AD0064,MADAWASKA RIVER AT VICTORIA,47.3668,-68.3231,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AO0157,SAINT JOHN RIVER AT GAGETOWN,45.7686,-66.1403,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+NB01AG0011,AROOSTOOK,46.7945,-67.7865,saint-john-river-and-st-croix-river-basin,Saint John River and St. Croix River Basin,Water-Qual-Eau-StJohn-StCroix-2000-present.csv
+MA05PF0022,"WINNIPEG RIVER AT POINTE DU BOIS,",50.3006,-95.5556,winnipeg-river-basin,Winnipeg River Basin,Water-Qual-Eau-Winnipeg-2000-present.csv
+YT09DD0014,HAGGART CREEK ABOVE SOUTH MCQUESTEN RIVER,63.93388,-136.03763,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09FB0002,"EAGLE RIVER AT DEMPSTER HIGHWAY, NEAR EAGLE PLAINS",66.44323,-136.71031,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09DD0008,SOUTH MCQUESTEN RIVER BELOW FLAT CREEK,63.91410,-135.72310,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09AB0006,YUKON RIVER BELOW MARSH LAKE,60.57874,-134.68671,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09FB0003,PORCUPINE RIVER ABOVE OLD CROW RIVER,67.57970,-139.78190,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09AB0008,YUKON RIVER ABOVE TAKHINI RIVER,60.83909,-135.18103,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09FC0002,OLD CROW RIVER AT MOUTH,67.58065,-139.80127,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09EA0001,"KLONDIKE RIVER ABOVE BONANZA CREEK, NEAR DAWSON",64.04260,-139.41000,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv
+YT09BC0021,ROSE CREEK ABOVE ANVIL CREEK,62.37510,-133.54370,yukon-river-basin,Yukon River Basin,Water-Qual-Eau-Yukon-2000-present.csv

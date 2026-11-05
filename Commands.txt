@@ -1,0 +1,10 @@
+cd "C:\Users\tresn\OneDrive\Desktop\Cleaned"
+
+env\Scripts\activate
+
+python generate_map.py --serve 
+
+deactivate
+
+python -m venv env
+Creates new virtual env

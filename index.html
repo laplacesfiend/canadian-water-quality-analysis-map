@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Canada Water Inspection Sites</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="lib/leaflet.min.css" />
+<link rel="stylesheet" href="lib/maplibre-gl.css" />
+<link rel="stylesheet" href="lib/MarkerCluster.css" />
+<link rel="stylesheet" href="lib/MarkerCluster.Default.css" />
+
+<style>
+  html, body { height: 100%; margin: 0; font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  #map { height: 100%; width: 100%; }
+
+  #controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+    max-width: 260px;
+    font-size: 13px;
+  }
+  #controls label { font-weight: 600; display: block; margin-bottom: 4px; }
+  #basin-filter { width: 100%; padding: 4px; }
+  #site-count { margin-top: 6px; color: #555; }
+
+  .popup-title { font-weight: 700; margin-bottom: 4px; font-size: 14px; }
+  .popup-basin { color: #256; font-size: 12px; margin-bottom: 6px; }
+  .popup-row { font-size: 12px; margin: 2px 0; }
+  .popup-label { color: #666; }
+  .popup-loading { font-style: italic; color: #888; font-size: 12px; }
+  .popup-error { color: #b00020; font-size: 12px; }
+  .popup-data-section { margin-top: 8px; border-top: 1px solid #ddd; padding-top: 6px; }
+  .popup-contaminant-select { width: 100%; padding: 3px; font-size: 12px; margin-top: 4px; }
+  .popup-chart { margin-top: 6px; }
+
+  .popup-excluded-note {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .popup-excluded-toggle {
+    font-size: 11px;
+    padding: 1px 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #f5f5f5;
+    color: #333;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .popup-excluded-toggle:hover { background: #eaeaea; }
+  .popup-excluded-list {
+    margin: 4px 0 0 0;
+    padding-left: 16px;
+    font-size: 11px;
+    color: #888;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .popup-excluded-list li { margin: 1px 0; }
+
+  #runtime-error {
+    display: none;
+    position: absolute;
+    bottom: 24px; left: 10px;
+    z-index: 2000;
+    max-width: 480px;
+    background: #b00020;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  #load-error {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 2000;
+    background: #b00020;
+    color: white;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div id="load-error">
+  Map libraries failed to load from the local <code>lib/</code> folder. Open the
+  map through the local server (<code>python3 generate_map.py</code>), and re-run
+  <code>generate_map.py</code> with internet access if lib/ is incomplete.
+</div>
+<div id="map"></div>
+<div id="runtime-error"></div>
+<div id="controls">
+  <label for="basin-filter">Filter by basin</label>
+  <select id="basin-filter">
+    <option value="__all__">All basins (344 sites)</option>
+  </select>
+  <div id="site-count"></div>
+</div>
+
+<script src="lib/leaflet.min.js"></script>
+<script src="lib/maplibre-gl.js"></script>
+<script src="lib/leaflet-maplibre-gl.js"></script>
+<script src="lib/leaflet.markercluster.js"></script>
+<script src="lib/papaparse.min.js"></script>
+<script>
+  if (typeof L === 'undefined' || typeof Papa === 'undefined' || typeof maplibregl === 'undefined' || typeof L.maplibreGL !== 'function') {
+      document.getElementById('load-error').style.display = 'block';
+      throw new Error('Map libraries failed to load.');
+  }
+</script>
+
+<script>
+function showRuntimeError(msg) {
+    const el = document.getElementById('runtime-error');
+    el.style.display = 'block';
+    el.textContent = (el.textContent ? el.textContent + ' | ' : '') + msg;
+}
+window.addEventListener('error', (e) => showRuntimeError(e.message));
+window.addEventListener('unhandledrejection', (e) => showRuntimeError(String(e.reason)));
+</script>
+
+<script>
+// ---------------------------------------------------------------------
+// DATA: baked in at generation time from map_sites_index.csv
+// ---------------------------------------------------------------------
+const SITES = [{"site_no": "NW10VK0001", "site_name": "RUGGLES RIVER AT OUTLET OF LAKE HAZEN", "lat": 81.7942, "lon": -70.4339, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10TB0002", "site_name": "THOMSEN RIVER AT GREEN CABIN", "lat": 73.2269, "lon": -119.5422, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10UE0002", "site_name": "OWL RIVER ABOVE DELTA, NEAR MOUTH", "lat": 66.8928, "lon": -64.6883, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10UF0002", "site_name": "WEASEL RIVER NEAR THE MOUTH AT WINDY LAKE", "lat": 66.3736, "lon": -65.4811, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10VK0002", "site_name": "VERY RIVER NEAR INLET LAKE HAZEN", "lat": 81.6803, "lon": -73.1258, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10UF0003", "site_name": "WEASEL RIVER AT SOUTH OUTLET OF SUMMIT LAKE", "lat": 66.6, "lon": -65.2297, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10VK0004", "site_name": "TURNABOUT RIVER NEAR INLET LAKE HAZEN", "lat": 81.9372, "lon": -69.0828, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10PC0019", "site_name": "COPPERMINE RIVER ABOVE COPPER CREEK", "lat": 67.2289, "lon": -115.8881, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10OB0003", "site_name": "HORNADAY RIVER BELOW UNNAMED EASTERN TRIBUTARY", "lat": 68.7542, "lon": -122.4022, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10VK0003", "site_name": "ABBE RIVER NEAR INLET LAKE HAZEN", "lat": 81.8439, "lon": -71.0769, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "NW10OB0006", "site_name": "HORNADAY RIVER ABOVE LITTLE HORNADAY RIVER", "lat": 68.3308, "lon": -121.9633, "basin_slug": "arctic-coast-islands-basin", "basin_name": "Arctic Coast - Islands Basin", "basin_file": "Water-Qual-Eau-Arctic-2000-present.csv"}, {"site_no": "US05ND0004", "site_name": "SOURIS RIVER NEAR SHERWOOD N.D.", "lat": 48.99, "lon": -101.9578, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "MA05NF0001", "site_name": "SOURIS RIVER AT COULTER, MANITOBA", "lat": 49.0909, "lon": -100.9475, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "US05NF0001", "site_name": "SOURIS RIVER NEAR WESTHOPE", "lat": 48.9997, "lon": -100.9, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "SA05JM0014", "site_name": "QU'APPELLE RIVER APPROX. 3.2KM. SOUTH", "lat": 50.4839, "lon": -101.5431, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "SA05MD0002", "site_name": "ASSINIBOINE RIVER AT HWY 8 BRIDGE", "lat": 51.5331, "lon": -101.8889, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "MA05OB0001", "site_name": "PEMBINA RIVER AT WINDYGATES, MANITOBA", "lat": 49.0314, "lon": -98.2778, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "MA05OC0001", "site_name": "RED RIVER AT EMERSON, MANITOBA", "lat": 49.0081, "lon": -97.2106, "basin_slug": "assiniboine-red-river-basin", "basin_name": "Assiniboine - Red River Basin", "basin_file": "Water-Qual-Eau-Assiniboine-Red-2000-present.csv"}, {"site_no": "AL06AD0001", "site_name": "BEAVER RIVER AT BEAVER CROSSING,", "lat": 54.3542, "lon": -110.2117, "basin_slug": "churchill-river-basin", "basin_name": "Churchill River Basin", "basin_file": "Water-Qual-Eau-Churchill-2000-present.csv"}, {"site_no": "SA06EA0003", "site_name": "CHURCHILL RIVER BELOW WASAWAKASIK", "lat": 55.6081, "lon": -102.1956, "basin_slug": "churchill-river-basin", "basin_name": "Churchill River Basin", "basin_file": "Water-Qual-Eau-Churchill-2000-present.csv"}, {"site_no": "SA06AF0001", "site_name": "COLD RIVER AT OUTLET OF COLD LAKE", "lat": 54.5667, "lon": -109.8361, "basin_slug": "churchill-river-basin", "basin_name": "Churchill River Basin", "basin_file": "Water-Qual-Eau-Churchill-2000-present.csv"}, {"site_no": "BC08NA0033", "site_name": "KICKING HORSE RIVER AT FIELD IN YOHO NATIONAL PARK", "lat": 51.39623, "lon": -116.49188, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NE0001", "site_name": "COLUMBIA RIVER AT WANETA", "lat": 49.02837, "lon": -117.60406, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NK0003", "site_name": "ELK RIVER ABOVE HIGHWAY 93", "lat": 49.1797, "lon": -115.16702, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NH0005", "site_name": "KOOTENAY RIVER ABOVE HIGHWAY 3, NEAR CRESTON", "lat": 49.1169, "lon": -116.57944, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NN0021", "site_name": "KETTLE RIVER AT GRAND FORKS", "lat": 49.0197, "lon": -118.47472, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NF0001", "site_name": "KOOTENAY RIVER ABOVE HIGHWAY 93 IN KOOTENAY NATIONAL PARK", "lat": 50.88697, "lon": -116.04585, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08ND0003", "site_name": "ILLECILLEWAET RIVER ABOVE HIGHWAY 1 IN GLACIER NATIONAL PARK", "lat": 51.21327, "lon": -117.69583, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NG0013", "site_name": "KOOTENAY RIVER ABOVE BULL RIVER", "lat": 49.47389, "lon": -115.48639, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NE0029", "site_name": "PEND D'OREILLE RIVER AT WANETA", "lat": 49.00461, "lon": -117.6121, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NA0048", "site_name": "COLUMBIA RIVER AT NICHOLSON", "lat": 51.24375, "lon": -116.91196, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NK0004", "site_name": "ELK RIVER BELOW SPARWOOD", "lat": 49.6643, "lon": -114.9041, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NN0011", "site_name": "KETTLE RIVER AT MIDWAY", "lat": 49.0047, "lon": -118.77615, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08ND0004", "site_name": "WOOLSEY CREEK ABOVE HIGHWAY 1 IN MOUNT REVELSTOKE NATIONAL PARK", "lat": 51.11742, "lon": -117.8928, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NG0009", "site_name": "KOOTENAY RIVER NEAR FENWICK STATION", "lat": 49.5279, "lon": -115.54918, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NE0005", "site_name": "COLUMBIA RIVER AT BIRCHBANK", "lat": 49.1779, "lon": -117.7171, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08NB0002", "site_name": "BEAVER RIVER ABOVE HIGHWAY 1 IN GLACIER NATIONAL PARK", "lat": 51.38336, "lon": -117.44908, "basin_slug": "columbia-river-basin", "basin_name": "Columbia River Basin", "basin_file": "Water-Qual-Eau-Columbia-2000-present.csv"}, {"site_no": "BC08KA0007", "site_name": "FRASER RIVER AT RED PASS", "lat": 52.98991, "lon": -119.01397, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MH0269", "site_name": "NORTH ALOUETTE RIVER AT 132ND AVE BRIDGE, NEAR MAPLE RIDGE", "lat": 49.24187, "lon": -122.59572, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LF0080", "site_name": "THOMPSON RIVER AT COOKS LANDING RD", "lat": 50.4189, "lon": -121.3494, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MB0007", "site_name": "CHILCOTIN RIVER AT CHRISTIE ROAD BRIDGE", "lat": 52.072, "lon": -123.26137, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08KH0014", "site_name": "QUESNEL RIVER AT LIKELY ROAD BRIDGE", "lat": 52.6155, "lon": -121.57268, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LF0078", "site_name": "THOMPSON RIVER AT SPENCES BRIDGE - NORTH BANK", "lat": 50.42026, "lon": -121.34871, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MC0001", "site_name": "FRASER RIVER AT MARGUERITE", "lat": 52.52938, "lon": -122.44635, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08KH0012", "site_name": "HORSEFLY RIVER ABOVE QUESNEL LAKE", "lat": 52.40231, "lon": -121.43281, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LF0001", "site_name": "THOMPSON RIVER AT SPENCES BRIDGE", "lat": 50.42083, "lon": -121.34139, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MF0001", "site_name": "FRASER RIVER AT HOPE", "lat": 49.38629, "lon": -121.45237, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08KH0013", "site_name": "QUESNEL RIVER AT GRAVELLE FERRY BRIDGE", "lat": 52.84245, "lon": -122.22476, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MH0027", "site_name": "SUMAS RIVER AT INTERNATIONAL BOUNDARY", "lat": 49.0024, "lon": -122.2323, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08MH0453", "site_name": "FRASER RIVER (MAIN ARM) AT GRAVESEND REACH - BUOY", "lat": 49.1486, "lon": -123.03859, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LG0001", "site_name": "NICOLA RIVER AT THE MOUTH", "lat": 50.42484, "lon": -121.31596, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LC0005", "site_name": "SHUSWAP RIVER ABOVE MARA LAKE", "lat": 50.6848, "lon": -119.06999, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08LE0004", "site_name": "SALMON RIVER AT HIGHWAY 1 BRIDGE, NEAR SALMON ARM", "lat": 50.69261, "lon": -119.33035, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "BC08KE0010", "site_name": "NECHAKO RIVER AT PRINCE GEORGE", "lat": 53.92717, "lon": -122.76674, "basin_slug": "fraser-river", "basin_name": "Fraser River", "basin_file": "Water-Qual-Eau-Fraser-2000-present.csv"}, {"site_no": "NF02XA0001", "site_name": "LITTLE MECATINA RIVER ABOVE LAKE FOURMONT", "lat": 52.2283, "lon": -61.3225, "basin_slug": "north-shore-gaspe-basin", "basin_name": "North Shore - Gasp\u00e9 Basin", "basin_file": "Water-Qual-Eau-Gasp\u00e9-2000-present.csv"}, {"site_no": "NF02XB0018", "site_name": "TRIBUTARY TO ST. AUGUSTINE RIVER", "lat": 52.5518, "lon": -59.3275, "basin_slug": "north-shore-gaspe-basin", "basin_name": "North Shore - Gasp\u00e9 Basin", "basin_file": "Water-Qual-Eau-Gasp\u00e9-2000-present.csv"}, {"site_no": "NW06MA0001", "site_name": "THELON RIVER BELOW OUTLET OF SCHULTZ LAKE", "lat": 64.7731, "lon": -97.0678, "basin_slug": "keewatin-southern-baffin-island", "basin_name": "Keewatin - Southern Baffin Island", "basin_file": "Water-Qual-Eau-Keewatin-Baffin-2000-present.csv"}, {"site_no": "NW06OA0001", "site_name": "BROWN RIVER AT OUTLET OF BROWN LAKE", "lat": 65.9356, "lon": -91.0664, "basin_slug": "keewatin-southern-baffin-island", "basin_name": "Keewatin - Southern Baffin Island", "basin_file": "Water-Qual-Eau-Keewatin-Baffin-2000-present.csv"}, {"site_no": "NW10ED0001", "site_name": "LIARD RIVER AT FORT LIARD", "lat": 60.2431, "lon": -123.4792, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "BC10DA0002", "site_name": "PETITOT RIVER BELOW HIGHWAY 77", "lat": 59.98376, "lon": -122.92732, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0014", "site_name": "PRAIRIE CREEK AT THE MOUTH", "lat": 61.2839, "lon": -124.4464, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10MC0001", "site_name": "PEEL RIVER ABOVE FORT MCPHERSON", "lat": 67.2206, "lon": -134.9456, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "YT10AA0001", "site_name": "LIARD RIVER AT UPPER CROSSING", "lat": 60.0507, "lon": -128.90434, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10ED0002", "site_name": "LIARD RIVER NEAR THE MOUTH", "lat": 61.7395, "lon": -121.2192, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW07RD0001", "site_name": "LOCKHART RIVER AT OUTLET OF ARTILLERY LAKE", "lat": 62.8889, "lon": -108.4717, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0017", "site_name": "SOUTH NAHANNI RIVER ABOVE NAHANNI", "lat": 61.0989, "lon": -123.59, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0020", "site_name": "PRAIRIE CREEK ABOVE CADILLAC MINE", "lat": 61.6047, "lon": -124.8172, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10JC0001", "site_name": "GREAT BEAR RIVER AT OUTLET OF GREAT BEAR LAKE", "lat": 65.1356, "lon": -123.5139, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "YT10MA0011", "site_name": "OGILVIE RIVER ABOVE ENGINEER CREEK", "lat": 65.3581, "lon": -138.30556, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0006", "site_name": "PRAIRIE CREEK 0.25 MILES DOWNSTREAM OF", "lat": 61.5467, "lon": -124.7889, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EA0008", "site_name": "FLAT RIVER AT PARK BOUNDARY", "lat": 61.4278, "lon": -126.63, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "YT10MD0001", "site_name": "FIRTH RIVER NEAR THE MOUTH", "lat": 69.5333, "lon": -139.95, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0019", "site_name": "PRAIRIE CREEK NEAR NAHANNI NPR BOUNDARY", "lat": 61.3478, "lon": -124.4164, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10FB0006", "site_name": "MACKENZIE RIVER AT STRONG POINT", "lat": 61.8181, "lon": -120.7903, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10LA0003", "site_name": "MACKENZIE RIVER ABOVE ARCTIC RED RIVER", "lat": 67.4561, "lon": -133.7369, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EA0004", "site_name": "FLAT RIVER NEAR THE MOUTH", "lat": 61.5331, "lon": -125.4056, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10RC0002", "site_name": "MEADOWBANK RIVER ABOVE NANAU LAKE", "lat": 65.4658, "lon": -95.8811, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW07OB0002", "site_name": "HAY RIVER NEAR ALBERTA/NWT BORDER", "lat": 60.0042, "lon": -116.9692, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EB0016", "site_name": "SOUTH NAHANNI RIVER ABOVE VIRGINIA FALLS", "lat": 61.6364, "lon": -125.7967, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10EC0021", "site_name": "PRAIRIE CREEK AT NEW NNPR BOUNDARY", "lat": 61.5217, "lon": -124.7125, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NW10KA0001", "site_name": "MACKENZIE RIVER AT NORMAN WELLS", "lat": 65.2817, "lon": -126.8492, "basin_slug": "lower-mackenzie-river-basin", "basin_name": "Lower Mackenzie River Basin", "basin_file": "Water-Qual-Eau-Mackenzie-2000-present.csv"}, {"site_no": "NS01EJ0001", "site_name": "SACKVILLE RIVER AT HIGHWAY 1 BRIDGE, BEDFORD", "lat": 44.7303, "lon": -63.6631, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FC0013", "site_name": "FRENCH LAKE CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.7278, "lon": -60.8653, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BR0114", "site_name": "KOUCHIBOUGUACIS RIVER ABOVE RUISSEAU \u00c0 LA TRUITE - ALSO KNOWN AS ST. IGNACE", "lat": 46.6999, "lon": -65.0847, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01DR0001", "site_name": "SOUTH RIVER AT ST. ANDREWS", "lat": 45.5578, "lon": -61.9039, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0048", "site_name": "LOON LAKE", "lat": 44.3167, "lon": -65.1914, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BR0087", "site_name": "RANKIN BROOK, NORTH BRANCH", "lat": 46.8114, "lon": -65.075, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0031", "site_name": "ROUND LAKE, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.8056, "lon": -60.5078, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0045", "site_name": "BRANCH POND 150 M OF MARY ANN BROOK; CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.7417, "lon": -60.4542, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0078", "site_name": "COBRIELLE LAKE IN MIDDLE OF LAKE", "lat": 44.3164, "lon": -65.2328, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01DC0203", "site_name": "SOUTH ANNAPOLIS RIVER", "lat": 45.0017, "lon": -64.8223, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0089", "site_name": "BROAD COVE MOUNTAIN LAKE", "lat": 46.732, "lon": -60.39, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BR0112", "site_name": "TWEEDIE BROOK NEAR HIGHWAY BRIDGE AT TWEEDIE BROOK", "lat": 46.7822, "lon": -65.1347, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EN0006", "site_name": "HOOPER LAKE", "lat": 45.0211, "lon": -62.0544, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EA0001", "site_name": "TUSKET RIVER AT WILSON'S BRIDGE", "lat": 43.9242, "lon": -65.8667, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0094", "site_name": "PESKAWA LAKE IN MIDDLE OF LAKE", "lat": 44.3178, "lon": -65.3622, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0067", "site_name": "BACK LAKE IN MIDDLE OF LAKE", "lat": 44.2931, "lon": -65.2678, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BV0168", "site_name": "WOLFE LAKE", "lat": 45.6581, "lon": -65.1397, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0086", "site_name": "CHANNEL LAKE IN MIDDLE OF TOP PART OF LAKE", "lat": 44.4256, "lon": -65.3097, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0046", "site_name": "GLASGOW LAKE, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.8192, "lon": -60.4917, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "PE01CA0001", "site_name": "MILL RIVER AT WATER SURVEY OF CANADA (WSC) GAUGE IN BLOOMFIELD PARK", "lat": 46.7442, "lon": -64.1817, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0080", "site_name": "BIG RED LAKE", "lat": 44.3494, "lon": -65.3828, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FB0001", "site_name": "NORTHEAST MARGAREE RIVER AT BRIDGE (WSC GAUGE)", "lat": 46.3656, "lon": -60.975, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BR0008", "site_name": "BLACK RIVER AT HIGHWAY 117 COVERED BRIDGE, CLAIRE FONTAINE", "lat": 46.8381, "lon": -64.9917, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0048", "site_name": "MICA HILL LAKE 50 M EAST OF LARGE ISLAND", "lat": 46.8146, "lon": -60.4429, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FC0019", "site_name": "PRESQU'\u00ceLE POND", "lat": 46.6897, "lon": -60.9583, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0051", "site_name": "FRESHWATER LAKE", "lat": 46.645, "lon": -60.3969, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0070", "site_name": "BIG DAM WEST LAKE IN MIDDLE OF LAKE", "lat": 44.4608, "lon": -65.2939, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BV0167", "site_name": "BENNET LAKE", "lat": 45.6272, "lon": -65.078, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "PE01CB0143", "site_name": "WILMOT RIVER NEAR KELVIN GROVE", "lat": 46.3933, "lon": -63.6586, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EE0014", "site_name": "MOOSE PIT BROOK AT OUTFLOW TO TUPPER LAKE", "lat": 44.4619, "lon": -65.0483, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0101", "site_name": "BEAVERSKIN LAKE IN MIDDLE OF WEST PART OF LAKE", "lat": 44.3078, "lon": -65.3331, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EC0005", "site_name": "ROSEWAY RIVER (WSC GAUGE), LOWER OHIO", "lat": 43.8381, "lon": -65.3694, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0075", "site_name": "PESKOWESK LAKE 425 M NORTH-WEST OF TIP OF ISLE DE L'ORIGNAL", "lat": 44.3167, "lon": -65.2828, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EJ0157", "site_name": "LITTLE SACKVILLE RIVER", "lat": 44.7645, "lon": -63.6876, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0111", "site_name": "PINE MARTEN STREAM AT FOREST ROAD ABOVE CULVERT", "lat": 44.4264, "lon": -65.2128, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0073", "site_name": "BIG DAM EAST LAKE IN MIDDLE OF LAKE", "lat": 44.4533, "lon": -65.2686, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0047", "site_name": "JOHN DEE LAKE 100 M EAST OF ISLAND, CAPE BRETON HIGHLANDS NATIONAL PARK", "lat": 46.8006, "lon": -60.5175, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "PE01CD0050", "site_name": "BEAR RIVER AT ST. MARGARETS", "lat": 46.4531, "lon": -62.3825, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FC0032", "site_name": "SUGAR BROOK LAKES", "lat": 46.796, "lon": -60.794, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0010", "site_name": "PEBBLELOGGITCH LAKE IN MIDDLE OF LAKE", "lat": 44.3014, "lon": -65.3514, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0076", "site_name": "GRAFTON LAKE IN CENTRE OF LAKE", "lat": 44.3858, "lon": -65.1775, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0007", "site_name": "KEJIMKUJIK LAKE 200 M SOUTH-WEST OF PEALE ISLAND", "lat": 44.3692, "lon": -65.2206, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FC0004", "site_name": "CHETICAMP RIVER ABOVE ROBERT BROOK (WSC GAUGE)", "lat": 46.6428, "lon": -60.9439, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NB01BR0006", "site_name": "PORTAGE RIVER AT HIGHWAY 117, LOWER SAPIN", "lat": 46.9275, "lon": -64.9106, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0040", "site_name": "WARREN LAKE 100 M SOUTH POINT CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.7139, "lon": -60.3939, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01DD0016", "site_name": "CORNWALLIS RIVER AT BRIDGE 850 M NORTH OF HIGHWAY 1", "lat": 45.0647, "lon": -64.6358, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EF0002", "site_name": "LAHAVE RIVER AT WEST NORTHFIELD BRIDGE ON BRUHM ROAD, (WSC GAUGE)", "lat": 44.4467, "lon": -64.5917, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0110", "site_name": "LOWER PINE MARTEN BOG AT OUTFLOW", "lat": 44.4236, "lon": -65.2133, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0015", "site_name": "LAKE OF ISLANDS CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.7481, "lon": -60.5244, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0005", "site_name": "MERSEY RIVER BELOW MILL FALLS SOUTH-WEST OF MAITLAND BRIDGE", "lat": 44.4367, "lon": -65.2228, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0085", "site_name": "FROZEN OCEAN LAKE IN MIDDLE OF LAKE", "lat": 44.4519, "lon": -65.3456, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01DC0001", "site_name": "ANNAPOLIS RIVER, AT BRIDGE 650 M SOUTH OF HIGHWAY 1 (WSC GAUGE)", "lat": 44.9492, "lon": -65.0292, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01EO0001", "site_name": "ST. MARY'S RIVER AT HIGHWAY 7 BRIDGE, STILLWATER", "lat": 45.1739, "lon": -61.98, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01FD0039", "site_name": "LONG POND, CAPE BRETON HIGHLANDS NATIONAL PARK OF CANADA", "lat": 46.7128, "lon": -60.4436, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0047", "site_name": "GEORGE LAKE", "lat": 44.3403, "lon": -65.2206, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0004", "site_name": "MOUNTAIN LAKE IN CENTRE OF NORTH PART OF LAKE", "lat": 44.3278, "lon": -65.2639, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0083", "site_name": "LIBERTY LAKE IN MIDDLE OF LAKE", "lat": 44.3856, "lon": -65.4267, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "NS01ED0095", "site_name": "UPPER SILVER LAKE IN MIDDLE OF SOUTH BASIN", "lat": 44.2828, "lon": -65.2467, "basin_slug": "maritime-coastal-basin", "basin_name": "Maritime Coastal Basin", "basin_file": "Water-Qual-Eau-Maritime-2000-present.csv"}, {"site_no": "AL11AA0003", "site_name": "MILK RIVER AT EASTERN CROSSING OF INTL BOUNDARY", "lat": 49.1242, "lon": -110.8942, "basin_slug": "missouri-river-basin", "basin_name": "Missouri River Basin", "basin_file": "Water-Qual-Eau-Missouri-2000-present.csv"}, {"site_no": "AL11AA0002", "site_name": "MILK RIVER AT WESTERN CROSSING OF INTL BOUNDARY", "lat": 49.0895, "lon": -112.4017, "basin_slug": "missouri-river-basin", "basin_name": "Missouri River Basin", "basin_file": "Water-Qual-Eau-Missouri-2000-present.csv"}, {"site_no": "AL05DA0001", "site_name": "NORTH SASKATCHEWAN RIVER AT WHIRLPOOL POINT", "lat": 52.0028, "lon": -116.4717, "basin_slug": "north-saskatchewan-river-basin", "basin_name": "North Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-N-Saskatchewan-2000-present.csv"}, {"site_no": "SA05FE0001", "site_name": "BATTLE RIVER NEAR UNWIN, SASKATCHEWAN", "lat": 52.9403, "lon": -109.8731, "basin_slug": "north-saskatchewan-river-basin", "basin_name": "North Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-N-Saskatchewan-2000-present.csv"}, {"site_no": "AL05EF0003", "site_name": "NORTH SASKATCHEWAN RIVER AT HIGHWAY #17 BRIDGE", "lat": 53.6014, "lon": -110.0081, "basin_slug": "north-saskatchewan-river-basin", "basin_name": "North Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-N-Saskatchewan-2000-present.csv"}, {"site_no": "NF02YS0021", "site_name": "BOG POND, TERRA NOVA NATIONAL PARK", "lat": 48.4942, "lon": -54.1331, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YQ0030", "site_name": "GANDER RIVER AT APPLETON", "lat": 48.9944, "lon": -54.8675, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YE0004", "site_name": "PORTLAND CREEK AT ROUTE 430", "lat": 50.1817, "lon": -57.6036, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZC0020", "site_name": "BUCK LAKE ON ROUTE 480", "lat": 48.0133, "lon": -57.6664, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0016", "site_name": "NAMELESS POND  NO. 2, NEAR SOUTH BROAD COVE", "lat": 48.5497, "lon": -53.8497, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YK0022", "site_name": "HUMBER CANAL AT MAIN DAM ROAD", "lat": 49.1661, "lon": -57.4156, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0015", "site_name": "UNNAMED POND, 6 KM NORTH-EAST OF BAD WEATHER POND", "lat": 49.4608, "lon": -57.525, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YG0020", "site_name": "EAGLE MOUNTAIN BROOK BELOW EAGLE MOUNTAIN POND", "lat": 49.8315, "lon": -57.2868, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0016", "site_name": "RENNIE'S RIVER AT CARNELL DRIVE", "lat": 47.5778, "lon": -52.7008, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0029", "site_name": "WILD COVE BROOK AT ROUTE 440", "lat": 48.9744, "lon": -57.8839, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0045", "site_name": "JAY POND, TERRA NOVA NATIONAL PARK", "lat": 48.6367, "lon": -53.8842, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0020", "site_name": "BROAD COVE BROOK NEAR ST. PHILLIPS", "lat": 47.5872, "lon": -52.8814, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZK0005", "site_name": "NORTHEAST RIVER 4.7 KM EAST OF DUNVILLE", "lat": 47.2731, "lon": -53.8403, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZN0004", "site_name": "SALMONIER RIVER AT ST. CATHERINES", "lat": 47.1911, "lon": -53.3867, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0029", "site_name": "LONG WATERS (SOUTH), TERRA NOVA NATIONAL PARK", "lat": 48.4581, "lon": -54.0556, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0142", "site_name": "CORDUROY BROOK NEAR CENTENNIAL PARK", "lat": 48.9392, "lon": -55.6631, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0009", "site_name": "WATERFORD RIVER AT KILBRIDE", "lat": 47.5294, "lon": -52.7414, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03QC0001", "site_name": "EAGLE RIVER ABOVE FALLS", "lat": 53.5342, "lon": -57.495, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZL0029", "site_name": "GOULDS BROOK NEAR MAKINSONS", "lat": 47.5047, "lon": -53.2911, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0065", "site_name": "SHALLOW POND NO. 3, TERRA NOVA NATIONAL PARK", "lat": 48.5042, "lon": -53.825, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YE0005", "site_name": "WESTERN BROOK AT ROUTE 430", "lat": 49.8303, "lon": -57.8564, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0014", "site_name": "VIRGINIA RIVER AT THE BOULEVARD", "lat": 47.5839, "lon": -52.6914, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0029", "site_name": "GRAND LAKE OUTFLOW AT NORTH WEST RIVER", "lat": 53.5217, "lon": -60.1419, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0011", "site_name": "TERRA NOVA RIVER AT SPENCER BRIDGE", "lat": 48.6406, "lon": -54.0361, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0018", "site_name": "LOMOND RIVER AT ROUTE 431", "lat": 49.4019, "lon": -57.7303, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0030", "site_name": "SEAL LAKE AT NARROWS", "lat": 54.3319, "lon": -61.6408, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0037", "site_name": "CACHE RIVER AT TLH", "lat": 53.1925, "lon": -62.2031, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03QA0045", "site_name": "KENAMU RIVER NEAR MOUTH", "lat": 53.4761, "lon": -59.9169, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0033", "site_name": "BIG POND BROOK BELOW BIG POND", "lat": 53.5119, "lon": -60.2919, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0143", "site_name": "EXPLOITS RIVER AT BOND BRIDGE", "lat": 49.0231, "lon": -55.4481, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03QC0002", "site_name": "ALEXIS RIVER NEAR PORT HOPE SIMPSON", "lat": 52.6489, "lon": -56.8714, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0098", "site_name": "VIRGINIA RIVER AT HEADWATERS", "lat": 47.5983, "lon": -52.7583, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0107", "site_name": "EXPLOITS RIVER NEAR MILLERTOWN", "lat": 48.7594, "lon": -56.5919, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0030", "site_name": "MINIPI RIVER BELOW MINIPI LAKE", "lat": 52.6147, "lon": -61.1864, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0176", "site_name": "SOUTH BROOK AT MOUTH", "lat": 47.5281, "lon": -52.7467, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0028", "site_name": "CAPE CARIBOU RIVER AT GRAND LAKE", "lat": 53.6211, "lon": -60.4144, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0113", "site_name": "YUDLE POND, TERRA NOVA NATIONAL PARK", "lat": 48.4383, "lon": -54.0339, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0001", "site_name": "CHURCHILL RIVER ABOVE UPPER MUSKRAT FALLS", "lat": 53.2478, "lon": -60.7892, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZA0006", "site_name": "GRAND CODROY RIVER BELOW OVERFALL BROOK", "lat": 47.8694, "lon": -59.1181, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0013", "site_name": "UNNAMED LAKE 3.5 KM SOUTH-SOUTH-EAST OF TEN MILE POND", "lat": 49.5967, "lon": -57.7333, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0020", "site_name": "PINE HILL POND, TERRA NOVA NATIONAL PARK", "lat": 48.6042, "lon": -53.9775, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03QA0044", "site_name": "CARTER BASIN OUTFLOW", "lat": 53.4978, "lon": -59.8736, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YN0001", "site_name": "LLOYDS RIVER AT ROUTE 480", "lat": 48.3044, "lon": -57.7186, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0037", "site_name": "WUCHUSK LAKE AT NASKAUPI RIVER INFLOW", "lat": 54.3953, "lon": -61.7858, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0020", "site_name": "EXPLOITS RIVER AT ASPEN BROOK", "lat": 48.9492, "lon": -55.9156, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0178", "site_name": "LEARYS BROOK AT PRINCE PHILIP DRIVE", "lat": 47.5725, "lon": -52.7392, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0035", "site_name": "DOMINION LAKE OUTFLOW", "lat": 52.7289, "lon": -61.754, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0183", "site_name": "KELLIGREWS RIVER AT KELLIVIEW CRESCENT", "lat": 47.4958, "lon": -53.0175, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0083", "site_name": "NORTHWEST RIVER AT TERRA NOVA NATIONAL PARK", "lat": 48.3956, "lon": -54.1981, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0359", "site_name": "PADDY'S POND AT OUTLET", "lat": 47.488, "lon": -52.8941, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0025", "site_name": "NASKAUPI RIVER BELOW NASKAUPI LAKE", "lat": 54.1317, "lon": -61.4292, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OD0012", "site_name": "WILSON RIVER EAST BRANCH", "lat": 53.3092, "lon": -62.9197, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0135", "site_name": "PINE HILL POND", "lat": 48.604, "lon": -53.9745, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0004", "site_name": "WATERFORD RIVER AT COMMONWEALTH AVENUE", "lat": 47.5219, "lon": -52.8081, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03PB0032", "site_name": "SUSAN RIVER NORTH OF BEAVER RIVER", "lat": 53.7381, "lon": -60.9467, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OA0020", "site_name": "ASHUANIPI RIVER AT FERGUSON BAY", "lat": 53.0017, "lon": -66.2416, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0001", "site_name": "TERRA NOVA RIVER AT TERRA NOVA", "lat": 48.5075, "lon": -54.2117, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0175", "site_name": "WATERFORD RIVER AT BROOKFIELD ROAD", "lat": 47.5261, "lon": -52.7633, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0185", "site_name": "SOUTH BROOK AT HEADWATERS", "lat": 47.4936, "lon": -52.8506, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03NF0013", "site_name": "UGJOKTOK RIVER BELOW HARP LAKE", "lat": 55.2333, "lon": -61.2992, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0013", "site_name": "CORNER BROOK AT MARGARET BOWATER PARK", "lat": 48.9444, "lon": -57.9367, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0035", "site_name": "WILD COVE BROOK 1.7 KM UPSTREAM OF ROUTE 440", "lat": 48.9778, "lon": -57.8664, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0003", "site_name": "RATTLE POND, TERRA NOVA NATIONAL PARK", "lat": 48.5136, "lon": -53.8244, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0001", "site_name": "EXPLOITS RIVER AT GRAND FALLS", "lat": 48.9306, "lon": -55.6669, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0015", "site_name": "QUIDI VIDI LAKE AT OUTLET", "lat": 47.5839, "lon": -52.6808, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0012", "site_name": "HUMBER RIVER AT HUMBER VILLAGE BRIDGE", "lat": 48.9836, "lon": -57.7611, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0069", "site_name": "OCHRE HILL PONDS (NORTH), TERRA NOVA NATIONAL PARK", "lat": 48.5025, "lon": -53.9639, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0180", "site_name": "VIRGINIA RIVER AT NEWFOUNDLAND DRIVE", "lat": 47.5997, "lon": -52.7006, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0181", "site_name": "WATERFORD RIVER AT BLACKHEAD ROAD", "lat": 47.5481, "lon": -52.7192, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0025", "site_name": "UNNAMED LAKE 1.5 KM EAST OF HARDING POND", "lat": 49.5622, "lon": -57.7264, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0026", "site_name": "UNNAMED POND, 3 KM NORTH-EAST OF KILLDEVIL HILL", "lat": 49.5236, "lon": -57.7111, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0048", "site_name": "MOSES COVE POND, TERRA NOVA NATIONAL PARK", "lat": 48.5967, "lon": -53.7544, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0111", "site_name": "BLUEHILL POND TERRA NOVA NATIONAL PARK", "lat": 48.6001, "lon": -53.9263, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0106", "site_name": "SOUTH BROOK AT PASADENA BEACH", "lat": 49.0212, "lon": -57.6118, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0177", "site_name": "RENNIE'S RIVER AT PORTUGAL COVE ROAD BRIDGE", "lat": 47.5744, "lon": -52.71, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YH0014", "site_name": "UNNAMED LAKE 3.8 KM NORTH-NORTH-EAST OF BADWEATHER POND", "lat": 49.4372, "lon": -57.5317, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YJ0004", "site_name": "PINCHGUT BROOK AT TCH", "lat": 48.7975, "lon": -58.0619, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YN0043", "site_name": "PETER STRIDES LAKE AT ROUTE 480", "lat": 48.1536, "lon": -57.7233, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OD0011", "site_name": "EAST METCHIN RIVER AT TLH", "lat": 53.4353, "lon": -63.2342, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YL0011", "site_name": "HUMBER RIVER AT LITTLE FALLS BRIDGE", "lat": 49.3483, "lon": -57.2353, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0070", "site_name": "CHATMAN PONDS WEST , TERRA NOVA NATIONAL PARK", "lat": 48.4942, "lon": -53.9842, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0032", "site_name": "PINUS RIVER ABOVE TLH", "lat": 53.1478, "lon": -61.5586, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0179", "site_name": "TRIBUTARY TO VIRGINIA RIVER AT GUZZWELL DRIVE", "lat": 47.5964, "lon": -52.7017, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OC0012", "site_name": "ATIKONAK RIVER ABOVE PANCHIA LAKE", "lat": 52.9694, "lon": -64.6622, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YQ0072", "site_name": "CARELESS BROOK AT RESOURCE ROAD STEEL BRIDGE", "lat": 48.9021, "lon": -54.9939, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0112", "site_name": "MINCHINS POND, TERRA NOVA NATIONAL PARK", "lat": 48.5581, "lon": -53.8826, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YG0001", "site_name": "MAIN RIVER AT ROUTE 420", "lat": 49.7694, "lon": -56.9042, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0134", "site_name": "OPERATIONS COMPOUND", "lat": 48.5584, "lon": -53.9747, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YS0136", "site_name": "TROUT POND", "lat": 48.4527, "lon": -54.0144, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0294", "site_name": "MANUELS RIVER ABOVE MANUELS ACCESS ROAD", "lat": 47.5197, "lon": -52.9447, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02YO0128", "site_name": "EXPLOITS RIVER BELOW GRAND FALLS", "lat": 48.9367, "lon": -55.6181, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF03OE0029", "site_name": "CHURCHILL RIVER ABOVE GRIZZLE FALLS", "lat": 52.9701, "lon": -61.4454, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0109", "site_name": "MUNDY POND AT OUTLET", "lat": 47.5517, "lon": -52.7439, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "NF02ZM0182", "site_name": "WATERFORD RIVER AT BREMIGANS POND DAM", "lat": 47.5186, "lon": -52.8558, "basin_slug": "newfoundland-and-labrador", "basin_name": "Newfoundland and Labrador", "basin_file": "Water-Qual-Eau-Newfoundland-TerreNeuve-Labrador-2000-present.csv"}, {"site_no": "BC08NM0160", "site_name": "MISSION CREEK AT LAKESHORE ROAD BRIDGE", "lat": 49.8429, "lon": -119.4877, "basin_slug": "okanagan-similkameen-river-basin", "basin_name": "Okanagan - Similkameen River Basin", "basin_file": "Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv"}, {"site_no": "BC08NL0005", "site_name": "SIMILKAMEEN RIVER NEAR INTERNATIONAL BOUNDARY", "lat": 49.0788, "lon": -119.70983, "basin_slug": "okanagan-similkameen-river-basin", "basin_name": "Okanagan - Similkameen River Basin", "basin_file": "Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv"}, {"site_no": "BC08NL0001", "site_name": "SIMILKAMEEN RIVER AT PRINCETON", "lat": 49.45907, "lon": -120.50393, "basin_slug": "okanagan-similkameen-river-basin", "basin_name": "Okanagan - Similkameen River Basin", "basin_file": "Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv"}, {"site_no": "BC08NM0001", "site_name": "OKANAGAN RIVER AT ROAD 18 BRIDGE, NEAR OLIVER", "lat": 49.11453, "lon": -119.5662, "basin_slug": "okanagan-similkameen-river-basin", "basin_name": "Okanagan - Similkameen River Basin", "basin_file": "Water-Qual-Eau-Okanagan-Similkameen-2000-present.csv"}, {"site_no": "QU02LB9001", "site_name": "OTTAWA RIVER, DOWNSTREAM OF THE CARILLON DAM", "lat": 45.5676, "lon": -74.3799, "basin_slug": "ottawa-river-basin", "basin_name": "Ottawa River Basin", "basin_file": "Water-Qual-Eau-Ottawa-Outaouais-2000-present.csv"}, {"site_no": "YT08AB0009", "site_name": "ALSEK RIVER ABOVE BATES RIVER IN KLUANE NATIONAL PARK", "lat": 60.1175, "lon": -137.9776, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "YT08AA0010", "site_name": "DEZADEASH RIVER AT HAINES JUNCTION", "lat": 60.74788, "lon": -137.50637, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08FC0001", "site_name": "DEAN RIVER AT ANAHIM LAKE", "lat": 52.4673, "lon": -125.29104, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08EF0001", "site_name": "SKEENA RIVER AT USK", "lat": 54.6346, "lon": -128.40897, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08HB0018", "site_name": "TSOLUM RIVER BELOW MUREX CREEK", "lat": 49.8087, "lon": -125.1948, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08HB0019", "site_name": "ENGLISHMAN RIVER AT PARKSVILLE", "lat": 49.31622, "lon": -124.28525, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08HA0018", "site_name": "COWICHAN RIVER BELOW SOMENOS CREEK", "lat": 48.7726, "lon": -123.6633, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08HB0027", "site_name": "TSOLUM RIVER NEAR COURTNEY", "lat": 49.7035, "lon": -125.0048, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08CG0001", "site_name": "ISKUT RIVER BELOW JOHNSON RIVER", "lat": 56.7378, "lon": -131.6755, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08HD0004", "site_name": "QUINSAM RIVER AT THE MOUTH", "lat": 50.03631, "lon": -125.29459, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "AK08DC0001", "site_name": "SALMON RIVER NEAR HYDER, ALASKA", "lat": 55.9254, "lon": -130.0355, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08EE0009", "site_name": "BULKLEY RIVER AT SMITHERS", "lat": 54.7892, "lon": -127.1552, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC08GA0010", "site_name": "CHEAKAMUS RIVER ABOVE DAISY LAKE FOREST ROAD", "lat": 50.0589, "lon": -123.09678, "basin_slug": "pacific-coastal-basin", "basin_name": "Pacific Coastal Basin", "basin_file": "Water-Qual-Eau-Pacific-Coastal-Cote-Pacifique-2000-present.csv"}, {"site_no": "BC07FD0005", "site_name": "PEACE RIVER ABOVE ALCES RIVER", "lat": 56.1261, "lon": -120.0564, "basin_slug": "peace-athabasca-river-basin", "basin_name": "Peace - Athabasca River Basin", "basin_file": "Water-Qual-Eau-Peace-Athabasca-2000-present.csv"}, {"site_no": "BC07FB0005", "site_name": "MURRAY RIVER NEAR THE MOUTH", "lat": 55.5526, "lon": -121.2035, "basin_slug": "peace-athabasca-river-basin", "basin_name": "Peace - Athabasca River Basin", "basin_file": "Water-Qual-Eau-Peace-Athabasca-2000-present.csv"}, {"site_no": "AL07AA0023", "site_name": "ATHABASCA RIVER AT HIGHWAY #16 BELOW SNARING RIVER", "lat": 53.0417, "lon": -118.087, "basin_slug": "peace-athabasca-river-basin", "basin_name": "Peace - Athabasca River Basin", "basin_file": "Water-Qual-Eau-Peace-Athabasca-2000-present.csv"}, {"site_no": "AL07AA0015", "site_name": "ATHABASCA RIVER ABOVE ATHABSCA FALLS", "lat": 52.6642, "lon": -117.8806, "basin_slug": "peace-athabasca-river-basin", "basin_name": "Peace - Athabasca River Basin", "basin_file": "Water-Qual-Eau-Peace-Athabasca-2000-present.csv"}, {"site_no": "AL05BA0011", "site_name": "BOW RIVER AT HIGHWAY 1 ABOVE LAKE LOUISE", "lat": 51.4431, "lon": -116.2117, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "AL05BE0013", "site_name": "BOW RIVER ABOUT 4.5 KM ABOVE CANMORE", "lat": 51.1228, "lon": -115.3867, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "AL05AK0001", "site_name": "SOUTH SASKATCHEWAN RIVER AT HWY 41,", "lat": 50.7375, "lon": -110.0956, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "AL05AD0005", "site_name": "WATERTON RIVER AT HWY 6 BRIDGE NEAR WATERTON LAKES", "lat": 49.1139, "lon": -113.8389, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "AL05AD0060", "site_name": "BELLY RIVER AT HIGHWAY #6, WATERTON LAKES NP", "lat": 49.0517, "lon": -113.6853, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "AL05CK0001", "site_name": "RED DEER RIVER NEAR BINDLOSS, ALBERTA", "lat": 50.9028, "lon": -110.2967, "basin_slug": "south-saskatchewan-river-basin", "basin_name": "South Saskatchewan River Basin", "basin_file": "Water-Qual-Eau-S-Saskatchewan-2000-present.csv"}, {"site_no": "MA05KH0001", "site_name": "SASKATCHEWAN RIVER ABOVE CARROT RIVER", "lat": 53.8417, "lon": -101.3342, "basin_slug": "lower-saskatchewan-nelson-river-basin", "basin_name": "Lower Saskatchewan - Nelson River Basin", "basin_file": "Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv"}, {"site_no": "SA05LC0001", "site_name": "RED DEER RIVER AT ERWOOD,", "lat": 52.8667, "lon": -102.1831, "basin_slug": "lower-saskatchewan-nelson-river-basin", "basin_name": "Lower Saskatchewan - Nelson River Basin", "basin_file": "Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv"}, {"site_no": "SA05KH0002", "site_name": "CARROT RIVER NEAR TURNBERRY,", "lat": 53.6, "lon": -102.1167, "basin_slug": "lower-saskatchewan-nelson-river-basin", "basin_name": "Lower Saskatchewan - Nelson River Basin", "basin_file": "Water-Qual-Eau-Saskatchewan-Nelson-2000-present.csv"}, {"site_no": "QU02OA0207", "site_name": "ILE SAINTE-TH\u00c9R\u00c8SE", "lat": 45.6745, "lon": -73.4592, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OD9039", "site_name": "LAKE SAINT-PIERRE OUTLET, SOUTH SHORE", "lat": 46.2717, "lon": -72.6193, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OF3005", "site_name": "SAINT-FRAN\u00c7OIS RIVER'S MOUTH", "lat": 46.066, "lon": -72.8093, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU03ED9402", "site_name": "GRANDE RIVI\u00c8RE DE LA BALEINE, AT PK8 (8 KIM UPSTREAM OF KUUJJUARAPIK)", "lat": 55.2792, "lon": -77.6428, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0054", "site_name": "JOHN SAURO POND AT VENISE EN QU\u00c9BEC", "lat": 45.0745, "lon": -73.163, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OB0067", "site_name": "PARC LE ROCHER AT SAINT-AMABLE", "lat": 45.6456, "lon": -73.3293, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OE3002", "site_name": "MAGOG RIVER AT LAKE MEMPHR\u00c9MAGOG OUTLET", "lat": 45.2657, "lon": -72.1557, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0052", "site_name": "RICHELIEU RIVER, WATER INTAKE OF SOREL 'S WATER FILTRATION PLANT", "lat": 46.034, "lon": -73.1176, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OG3007", "site_name": "YAMASKA RIVER, BRIDGE ON THE ROAD 132", "lat": 46.0051, "lon": -72.9101, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OA0204", "site_name": "\u00c0 L'ORME RIVER", "lat": 45.4444, "lon": -73.9159, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OF3004", "site_name": "SAINT-FRAN\u00c7OIS RIVER IN PIERREVILLE", "lat": 46.0664, "lon": -72.8122, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OG3008", "site_name": "YAMASKA RIVER AT  ROAD 116 BRIDGE, SAINT-HYACINTHE", "lat": 45.6284, "lon": -72.9397, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "ON02MC0032", "site_name": "ST. LAWRENCE RIVER, WATER INTAKE OF CORNWALL'S WATER FILTRATION PLANT", "lat": 45.0138, "lon": -74.7908, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0001", "site_name": "RICHELIEU RIVER NEAR THE TOWN OF LACOLLE", "lat": 45.0614, "lon": -73.3325, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OA0440", "site_name": "STATION 120 M FROM SOUTH SHORE OF WOLFE ISLAND AT BANFORD POINT", "lat": 44.2063, "lon": -76.2379, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OA0206", "site_name": "ILES-DE-BOUCHERVILLE", "lat": 45.5966, "lon": -73.4997, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OD9009", "site_name": "ST. LAWRENCE RIVER, WATER INTAKE OF B\u00c9CANCOUR'S WATER FILTRATION PLANT", "lat": 46.3116, "lon": -72.546, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02NG3013", "site_name": "SAINT-MAURICE RIVER, WATER INTAKE OF TROIS-RIVI\u00c8RES 'S WATER FILTRATION PLANT", "lat": 46.382, "lon": -72.6105, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02NG3020", "site_name": "RIVI\u00c8RE \u00c0 LA P\u00caCHE, STATION CABIN RPA001 (LA MAURICIE NATIONAL PARK)", "lat": 46.6776, "lon": -72.8652, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0055", "site_name": "L'ACADIE RIVER", "lat": 45.3528, "lon": -73.3641, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU03DC0001", "site_name": "LA GRANDE RESERVOIR", "lat": 53.7875, "lon": -77.4413, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0053", "site_name": "RUISSEAU FAIRBANKS AT NOTRE-DAME DU MONT CARMEL", "lat": 45.0176, "lon": -73.3553, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OA0125", "site_name": "CH\u00c2TEAUGUAY RIVER'S MOUTH", "lat": 45.3769, "lon": -73.7511, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OA0205", "site_name": "MEADOWBROOK BROOK", "lat": 45.4251, "lon": -73.8703, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OB9004", "site_name": "ST. LAWRENCE RIVER, WATER INTAKE OF LAVALTRIE'S WATER FILTRATION PLANT", "lat": 45.8744, "lon": -73.2806, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OG3010", "site_name": "CHIBOUET RIVER AT  SAINT-HUGUES", "lat": 45.7908, "lon": -72.8258, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OD3004", "site_name": "NICOLET RIVER IN NICOLET", "lat": 46.2454, "lon": -72.6512, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OB0066", "site_name": "ST. LAWRENCE RIVER, \u00ceLE DE LA COMMUNE, CHENAL LA PASSE (BOUCHERVILLE ISLANDS)", "lat": 45.6187, "lon": -73.4723, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OC3000", "site_name": "LAKE SAINT-PIERRE OUTLET, NORTH SHORE", "lat": 46.2802, "lon": -72.6581, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OG3009", "site_name": "NOIRE RIVER AT ROAD 235 BRIDGE, SAINT-PIE", "lat": 45.4954, "lon": -72.9042, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OB0068", "site_name": "BOIS\u00c9 DU TREMBLAY AT LONGUEUIL - SITE 1", "lat": 45.534, "lon": -73.4257, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02101021", "site_name": "YAMACHICHE RIVER- OUTLET", "lat": 46.2661, "lon": -72.8065, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OD9034", "site_name": "ST. LAWRENCE RIVER  PORT ST-FRAN\u00c7OIS, 65 M FROM THE SOUTH SHORE", "lat": 46.2728, "lon": -72.62, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02PH9025", "site_name": "COMMISSAIRE BROOK", "lat": 46.8742, "lon": -71.2924, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OJ0059", "site_name": "ST. LAWRENCE RIVER NEAR CONTRECOEUR", "lat": 45.8522, "lon": -73.248, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02PH9024", "site_name": "ST. LAWRENCE RIVER, WATER INTAKE OF L\u00c9VIS'S WATER FILTRATION PLANT", "lat": 46.8071, "lon": -71.19, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02PK9000", "site_name": "BECANCOUR, SOUTH SHORE", "lat": 46.3835, "lon": -72.4092, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU03KE0002", "site_name": "KOKSOAK RIVER, 8 KM SOUTH-WEST OF KUUJJUAQ", "lat": 58.0388, "lon": -68.4614, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02PH9065", "site_name": "ILE D'ORL\u00c9ANS", "lat": 46.8403, "lon": -71.1326, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "QU02OB0069", "site_name": "BOIS\u00c9 DU TREMBLAY AT LONGUEUIL - SITE 2", "lat": 45.5371, "lon": -73.4243, "basin_slug": "saint-lawrence-river-basin", "basin_name": "Saint Lawrence River Basin", "basin_file": "Water-Qual-Eau-St-Lawrence-St-Laurent-2000-present.csv"}, {"site_no": "NB01AP0380", "site_name": "CANAAN RIVER", "lat": 46.0722, "lon": -65.3664, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AL0036", "site_name": "NASHWAAK RIVER ABOVE MARYSVILLE BRIDGE, RTE 8", "lat": 45.9793, "lon": -66.591, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AP0241", "site_name": "KENNEBECASIS RIVER ABOVE BLOOMFIELD BRIDGE", "lat": 45.5801, "lon": -65.7567, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AR0151", "site_name": "FOREST CITY, MAINE", "lat": 45.6641, "lon": -67.7336, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AO0042", "site_name": "JEMSEG RIVER AT OLD BRIDGE ABUTMENT, (WATER SURVEY OF CANADA GAUGE)", "lat": 45.8292, "lon": -66.1169, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AD0005", "site_name": "SAINT JOHN RIVER AT EDMUNDSTON", "lat": 47.3608, "lon": -68.3254, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AK0047", "site_name": "NACKAWIC STREAM", "lat": 46.0468, "lon": -67.2427, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AK0157", "site_name": "SAINT JOHN RIVER BELOW UPPER QUEENSBURY, RTE 105", "lat": 45.9774, "lon": -67.173, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AF0084", "site_name": "SAINT JOHN RIVER BELOW ST. BASILE, RTE 144", "lat": 47.3549, "lon": -68.2318, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AN0032", "site_name": "SALMON RIVER", "lat": 46.2906, "lon": -65.7225, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AJ0126", "site_name": "MEDUXNEKEAG RIVER AT NEW WSC GAUGE LOCATION", "lat": 46.216, "lon": -67.728, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AG0008", "site_name": "AROOSTOOK RIVER ABOVE BRIDGE, RTE 2", "lat": 46.8216, "lon": -67.7341, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AQ0003", "site_name": "LEPREAU RIVER ABOVE BRIDGE, ROUTE 780", "lat": 45.1697, "lon": -66.468, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AJ0008", "site_name": "PRESQU'\u00ceLE RIVER AT TRACEY MILLS ABOVE OLD DAM", "lat": 46.4394, "lon": -67.7444, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AH0019", "site_name": "TOBIQUE RIVER BELOW ARTHURETTE BRIDGE, RTE 109", "lat": 46.783, "lon": -67.511, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AJ0067", "site_name": "BIG PRESQUE ISLE STREAM ABOVE BRIDGE, RTE 103", "lat": 46.3998, "lon": -67.6106, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "00BR01AP0067", "site_name": "SAINT JOHN RIVER EVANDALE, RTE 102", "lat": 45.5926, "lon": -66.0269, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AD0063", "site_name": "SAINT JOHN RIVER NEAR DICKEY BRIDGE MAINE", "lat": 47.113, "lon": -69.0896, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AR0001", "site_name": "UPSTREAM MILLTOWN DAM", "lat": 45.1698, "lon": -67.2989, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AR0021", "site_name": "ST. CROIX RIVER AT MILLTOWN CANADIAN SIDE", "lat": 45.1756, "lon": -67.2928, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AD0062", "site_name": "ST FRAN\u00c7OIS NEAR WATER SURVEY SITE", "lat": 47.2062, "lon": -68.9563, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AF0178", "site_name": "SAINT JOHN RIVER NEAR GRAND FALLS", "lat": 47.0043, "lon": -67.7258, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AD0064", "site_name": "MADAWASKA RIVER AT VICTORIA", "lat": 47.3668, "lon": -68.3231, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AO0157", "site_name": "SAINT JOHN RIVER AT GAGETOWN", "lat": 45.7686, "lon": -66.1403, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "NB01AG0011", "site_name": "AROOSTOOK", "lat": 46.7945, "lon": -67.7865, "basin_slug": "saint-john-river-and-st-croix-river-basin", "basin_name": "Saint John River and St. Croix River Basin", "basin_file": "Water-Qual-Eau-StJohn-StCroix-2000-present.csv"}, {"site_no": "MA05PF0022", "site_name": "WINNIPEG RIVER AT POINTE DU BOIS,", "lat": 50.3006, "lon": -95.5556, "basin_slug": "winnipeg-river-basin", "basin_name": "Winnipeg River Basin", "basin_file": "Water-Qual-Eau-Winnipeg-2000-present.csv"}, {"site_no": "YT09DD0014", "site_name": "HAGGART CREEK ABOVE SOUTH MCQUESTEN RIVER", "lat": 63.93388, "lon": -136.03763, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09FB0002", "site_name": "EAGLE RIVER AT DEMPSTER HIGHWAY, NEAR EAGLE PLAINS", "lat": 66.44323, "lon": -136.71031, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09DD0008", "site_name": "SOUTH MCQUESTEN RIVER BELOW FLAT CREEK", "lat": 63.9141, "lon": -135.7231, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09AB0006", "site_name": "YUKON RIVER BELOW MARSH LAKE", "lat": 60.57874, "lon": -134.68671, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09FB0003", "site_name": "PORCUPINE RIVER ABOVE OLD CROW RIVER", "lat": 67.5797, "lon": -139.7819, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09AB0008", "site_name": "YUKON RIVER ABOVE TAKHINI RIVER", "lat": 60.83909, "lon": -135.18103, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09FC0002", "site_name": "OLD CROW RIVER AT MOUTH", "lat": 67.58065, "lon": -139.80127, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09EA0001", "site_name": "KLONDIKE RIVER ABOVE BONANZA CREEK, NEAR DAWSON", "lat": 64.0426, "lon": -139.41, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}, {"site_no": "YT09BC0021", "site_name": "ROSE CREEK ABOVE ANVIL CREEK", "lat": 62.3751, "lon": -133.5437, "basin_slug": "yukon-river-basin", "basin_name": "Yukon River Basin", "basin_file": "Water-Qual-Eau-Yukon-2000-present.csv"}];
+const BASINS = ["Arctic Coast - Islands Basin", "Assiniboine - Red River Basin", "Churchill River Basin", "Columbia River Basin", "Fraser River", "Keewatin - Southern Baffin Island", "Lower Mackenzie River Basin", "Lower Saskatchewan - Nelson River Basin", "Maritime Coastal Basin", "Missouri River Basin", "Newfoundland and Labrador", "North Saskatchewan River Basin", "North Shore - Gasp\u00e9 Basin", "Okanagan - Similkameen River Basin", "Ottawa River Basin", "Pacific Coastal Basin", "Peace - Athabasca River Basin", "Saint John River and St. Croix River Basin", "Saint Lawrence River Basin", "South Saskatchewan River Basin", "Winnipeg River Basin", "Yukon River Basin"];
+
+// ---------------------------------------------------------------------
+// Basin CSV loading — fetched live from wq_basin_data/ (NOT baked into
+// this HTML at generation time; these files can be tens of thousands of
+// rows). Cached in memory per basin file so opening several site popups
+// within the same basin only fetches/parses that basin's CSV once.
+// ---------------------------------------------------------------------
+const BASIN_DATA_DIR = "wq_basin_data";
+const basinCsvCache = {};   // basin_file -> Promise<Array<row objects>>
+
+function loadBasinCSV(basinFile) {
+    if (basinCsvCache[basinFile]) return basinCsvCache[basinFile];
+
+    const url = `${BASIN_DATA_DIR}/${encodeURIComponent(basinFile)}`;
+    basinCsvCache[basinFile] = fetch(url)
+        .then(resp => {
+            if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${basinFile}`);
+            return resp.text();
+        })
+        .then(text => new Promise((resolve, reject) => {
+            // Strip a leading UTF-8 BOM if present — these ECCC CSVs have one,
+            // and unlike Python's utf-8-sig, fetch().text() does not strip it,
+            // which would otherwise corrupt the first header (SITE_NO -> "﻿SITE_NO").
+            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (result) => resolve(result.data),
+                error: (err) => reject(err),
+            });
+        }));
+
+    return basinCsvCache[basinFile];
+}
+
+// ---------------------------------------------------------------------
+// Seasonal Kendall trend test (Hirsch, Slack & Smith, 1982)
+// ---------------------------------------------------------------------
+// Season = calendar month (12 possible seasons — the field-standard
+// choice for water quality trend analysis). Compares each month only to
+// the SAME month in other years, so a normal seasonal cycle (e.g. spring
+// melt vs. summer low-flow) never gets mistaken for a long-term trend.
+//
+// GROUPING ALGORITHM:
+//   1. Parse every row's date + value.
+//   2. Collapse multiple samples in the same (site, month, year) down to
+//      one value via median — the standard robust choice for skewed
+//      environmental data, and required because the test needs exactly
+//      one value per season-year.
+//   3. Only keep months that have data in >=2 different years — a month
+//      seen in just one year can never contribute a valid comparison, so
+//      including it would just be noise. This is what actually
+//      determines "which seasons are usable" for THIS site+contaminant,
+//      rather than assuming all 12 months are meaningful.
+//   4. Within each usable month, compute the Mann-Kendall S statistic and
+//      its tie-corrected variance across years; sum across months for
+//      the overall S and variance (assumes seasons are independent —
+//      the standard/simple form of the test; Hirsch & Slack's 1984
+//      covariance correction for cross-season autocorrelation is a
+//      documented refinement, not applied here).
+//   5. Z-score (with continuity correction) -> two-tailed p-value.
+//   6. Sen's slope: median of every valid pairwise slope, computed within
+//      each season across years, pooled across all seasons.
+//
+// NOTE ON NON-DETECTS: rows flagged "<" in FLAG_MARQUEUR (below the
+// detection limit) are used at face value (ECCC reports the detection
+// limit as VALUE_VALEUR for these). This is a simplification — the more
+// rigorous approach treats non-detects as a special tie case — but keeps
+// the first version straightforward.
+function seasonalKendallTest(rows) {
+    const parsed = [];
+    for (const r of rows) {
+        const dt = new Date((r.DATE_TIME_HEURE || "").replace(" ", "T"));
+        const val = parseFloat(r.VALUE_VALEUR);
+        if (isNaN(dt.getTime()) || isNaN(val)) continue;
+        parsed.push({ year: dt.getUTCFullYear(), month: dt.getUTCMonth() + 1, val });
+    }
+
+    const median = (arr) => {
+        const s = [...arr].sort((a, b) => a - b);
+        const mid = Math.floor(s.length / 2);
+        return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    };
+
+    // Step 2: collapse to one value per (year, month) via median
+    const byYM = new Map();
+    for (const { year, month, val } of parsed) {
+        const key = `${year}-${month}`;
+        if (!byYM.has(key)) byYM.set(key, []);
+        byYM.get(key).push(val);
+    }
+    const agg = new Map();
+    for (const [key, vals] of byYM) agg.set(key, median(vals));
+
+    // Step 3: which months have >=2 distinct years of data?
+    const monthYears = new Map();
+    for (const key of agg.keys()) {
+        const [year, month] = key.split('-').map(Number);
+        if (!monthYears.has(month)) monthYears.set(month, new Set());
+        monthYears.get(month).add(year);
+    }
+    const usableMonths = [...monthYears.entries()]
+        .filter(([, yrs]) => yrs.size >= 2)
+        .map(([m]) => m)
+        .sort((a, b) => a - b);
+
+    if (usableMonths.length === 0) {
+        return { ok: false, reason: "Not enough repeated-year data in any single month to run a Seasonal Kendall test." };
+    }
+
+    // Step 4: per-season Mann-Kendall S + tie-corrected variance
+    function mkSAndVar(values) {
+        const n = values.length;
+        let s = 0;
+        for (let i = 0; i < n - 1; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const diff = values[j] - values[i];
+                s += (diff > 0 ? 1 : 0) - (diff < 0 ? 1 : 0);
+            }
+        }
+        const counts = new Map();
+        for (const v of values) counts.set(v, (counts.get(v) || 0) + 1);
+        let tieTerm = 0;
+        for (const t of counts.values()) if (t > 1) tieTerm += t * (t - 1) * (2 * t + 5);
+        const varS = (n * (n - 1) * (2 * n + 5) - tieTerm) / 18;
+        return { s, varS };
+    }
+
+    let sTotal = 0, varTotal = 0;
+    const slopes = [];
+    for (const m of usableMonths) {
+        const years = [...monthYears.get(m)].sort((a, b) => a - b);
+        const values = years.map(y => agg.get(`${y}-${m}`));
+        const { s, varS } = mkSAndVar(values);
+        sTotal += s;
+        varTotal += varS;
+        for (let i = 0; i < values.length - 1; i++) {
+            for (let j = i + 1; j < values.length; j++) {
+                const dy = years[j] - years[i];
+                if (dy !== 0) slopes.push((values[j] - values[i]) / dy);
+            }
+        }
+    }
+
+    // Step 5: Z-score with continuity correction -> two-tailed p-value
+    let z;
+    if (sTotal > 0) z = (sTotal - 1) / Math.sqrt(varTotal);
+    else if (sTotal < 0) z = (sTotal + 1) / Math.sqrt(varTotal);
+    else z = 0;
+
+    function erf(x) {
+        // Abramowitz-Stegun 7.1.26 approximation, accurate to ~1.5e-7
+        const t = 1 / (1 + 0.3275911 * Math.abs(x));
+        const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+        return x >= 0 ? y : -y;
+    }
+    const normCdf = (zz) => 0.5 * (1 + erf(zz / Math.SQRT2));
+    const p = 2 * (1 - normCdf(Math.abs(z)));
+
+    // Step 6: Sen's slope
+    const senSlope = slopes.length ? median(slopes) : null;
+
+    return {
+        ok: true,
+        S: sTotal,
+        varS: varTotal,
+        Z: z,
+        p,
+        senSlope,
+        usableMonths,
+        seasonsUsed: usableMonths.length,
+        yearSpan: [...agg.keys()].map(k => Number(k.split('-')[0])),
+    };
+}
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// ---------------------------------------------------------------------
+// Seasonal comparison chart. Plots EXACTLY the months the Seasonal
+// Kendall test above actually used (result.usableMonths) — i.e. only
+// months with >=2 distinct years of data, same rule the test applies.
+// This keeps the chart and the trend numbers below it consistent: if a
+// month isn't in "Seasons used", it won't be drawn here either.
+//
+// One color per calendar month (index = month - 1), so a given month
+// always renders in the same color across different contaminants/sites.
+// ---------------------------------------------------------------------
+const COMPARISON_COLORS = [
+    "#2b8cbe", "#e6550d", "#31a354", "#756bb1", "#c51b8a", "#636363",
+    "#1c9099", "#fd8d3c", "#78c679", "#9e9ac8", "#f768a1", "#969696",
+]; // Jan..Dec, in order
+
+function computeSeasonalComparisonData(rows, months) {
+    const median = (arr) => {
+        const s = [...arr].sort((a, b) => a - b);
+        const mid = Math.floor(s.length / 2);
+        return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    };
+
+    // month -> year -> [values]
+    const byMonth = new Map(months.map(m => [m, new Map()]));
+    let unit = "";
+    for (const r of rows) {
+        const dt = new Date((r.DATE_TIME_HEURE || "").replace(" ", "T"));
+        const val = parseFloat(r.VALUE_VALEUR);
+        if (isNaN(dt.getTime()) || isNaN(val)) continue;
+        const month = dt.getUTCMonth() + 1;
+        if (!byMonth.has(month)) continue;
+        const year = dt.getUTCFullYear();
+        const yearMap = byMonth.get(month);
+        if (!yearMap.has(year)) yearMap.set(year, []);
+        yearMap.get(year).push(val);
+        if (!unit && r.UNIT_UNITÉ) unit = r.UNIT_UNITÉ;
+    }
+
+    // Collapse same (month, year) samples to one point via median.
+    const series = months.map(m => {
+        const yearMap = byMonth.get(m);
+        const points = [...yearMap.entries()]
+            .map(([year, vals]) => ({ year, value: median(vals) }))
+            .sort((a, b) => a.year - b.year);
+        return { month: m, points };
+    });
+
+    return { series, unit };
+}
+
+function renderSeasonalComparisonSVG(data, months) {
+    const seriesWithData = data.series.filter(s => s.points.length > 0);
+    if (seriesWithData.length === 0) {
+        return `<div class="popup-loading">No May/June data available to chart for this contaminant.</div>`;
+    }
+
+    const W = 300, H = 170, padL = 42, padR = 10, padT = 12, padB = 26;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+
+    const allYears = [...new Set(seriesWithData.flatMap(s => s.points.map(p => p.year)))].sort((a, b) => a - b);
+    const allValues = seriesWithData.flatMap(s => s.points.map(p => p.value));
+    let yMin = Math.min(...allValues), yMax = Math.max(...allValues);
+    if (yMin === yMax) { yMin -= 1; yMax += 1; } // avoid a zero-height scale
+    const yPad = (yMax - yMin) * 0.08;
+    yMin -= yPad; yMax += yPad;
+
+    const xYear = (year) => padL + (allYears.length === 1 ? plotW / 2
+        : (year - allYears[0]) / (allYears[allYears.length - 1] - allYears[0]) * plotW);
+    const yVal = (v) => padT + plotH - (v - yMin) / (yMax - yMin) * plotH;
+
+    // Y-axis ticks (4 evenly spaced)
+    const yTicks = [0, 1, 2, 3, 4].map(i => yMin + (yMax - yMin) * i / 4);
+    const yTicksSVG = yTicks.map(t => `
+        <line x1="${padL}" y1="${yVal(t).toFixed(1)}" x2="${W - padR}" y2="${yVal(t).toFixed(1)}" stroke="#eee" stroke-width="1" />
+        <text x="${padL - 6}" y="${(yVal(t) + 3).toFixed(1)}" font-size="9" fill="#666" text-anchor="end">${t.toPrecision(3)}</text>
+    `).join("");
+
+    // X-axis ticks: every year, or thinned out if too many to fit legibly
+    const step = allYears.length > 8 ? Math.ceil(allYears.length / 8) : 1;
+    const xTicksSVG = allYears.filter((_, i) => i % step === 0).map(y => `
+        <text x="${xYear(y).toFixed(1)}" y="${H - padB + 14}" font-size="9" fill="#666" text-anchor="middle">${y}</text>
+    `).join("");
+
+    const seriesSVG = seriesWithData.map((s) => {
+        const color = COMPARISON_COLORS[s.month - 1];
+        const linePoints = s.points.map(p => `${xYear(p.year).toFixed(1)},${yVal(p.value).toFixed(1)}`).join(" ");
+        const dots = s.points.map(p => `<circle cx="${xYear(p.year).toFixed(1)}" cy="${yVal(p.value).toFixed(1)}" r="2.5" fill="${color}" />`).join("");
+        return `<polyline points="${linePoints}" fill="none" stroke="${color}" stroke-width="1.5" />${dots}`;
+    }).join("");
+
+    // Space legend items to fit however many months ended up qualifying
+    // (could be 2, could be all 12) instead of a fixed 55px gap.
+    const legendItemW = Math.min(55, (W - padL - padR) / seriesWithData.length);
+    const legendSVG = seriesWithData.map((s, i) => {
+        const color = COMPARISON_COLORS[s.month - 1];
+        const x = padL + i * legendItemW;
+        return `
+            <circle cx="${x}" cy="${H - 6}" r="3" fill="${color}" />
+            <text x="${x + 6}" y="${H - 3}" font-size="9" fill="#333">${MONTH_NAMES[s.month - 1]}</text>
+        `;
+    }).join("");
+
+    const unitLabel = data.unit ? ` (${data.unit})` : "";
+
+    return `
+        <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;">
+            <text x="4" y="10" font-size="9" fill="#666">value${unitLabel}</text>
+            ${yTicksSVG}
+            <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="#999" stroke-width="1" />
+            <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="#999" stroke-width="1" />
+            ${xTicksSVG}
+            ${seriesSVG}
+            ${legendSVG}
+        </svg>
+    `;
+}
+
+function renderTrendResultHTML(contaminant, result) {
+    if (!result.ok) {
+        return `<div class="popup-data-section popup-loading">${result.reason}</div>`;
+    }
+    const years = result.yearSpan;
+    // Direction is read from Z (equivalently, S), NOT from Sen's slope.
+    // Sen's slope is the median of every pairwise slope pooled across all
+    // usable months — with heavily tied data (e.g. detection-limit
+    // non-detects tied at a floor value, or a plateau of repeated values)
+    // that pooled median can land exactly on 0, and ">0" would then
+    // silently default to "decreasing" even when the test itself (S/Z,
+    // what the p-value is actually computed from) is strongly positive.
+    // Z's sign always agrees with S's sign and isn't sensitive to that
+    // tie-heavy median artifact, so it's the reliable source for direction.
+    const direction = result.p >= 0.05 ? "No significant trend"
+        : (result.Z > 0 ? "Significant increasing trend" : "Significant decreasing trend");
+    const months = result.usableMonths.map(m => MONTH_NAMES[m - 1]).join(", ");
+    return `<div class="popup-data-section">
+        <div class="popup-row"><b>${direction}</b></div>
+        <div class="popup-row"><span class="popup-label">p-value:</span> ${result.p.toFixed(4)}</div>
+        <div class="popup-row"><span class="popup-label">Sen's slope:</span> ${result.senSlope.toFixed(5)} per year</div>
+        <div class="popup-row"><span class="popup-label">S / Z:</span> ${result.S} / ${result.Z.toFixed(3)}</div>
+        <div class="popup-row"><span class="popup-label">Seasons used:</span> ${months} (${result.seasonsUsed})</div>
+        <div class="popup-row"><span class="popup-label">Years:</span> ${Math.min(...years)}–${Math.max(...years)}</div>
+    </div>`;
+}
+
+// ---------------------------------------------------------------------
+// What happens once a contaminant is chosen: run the Seasonal Kendall
+// test on that site+contaminant's rows and render the result.
+// ---------------------------------------------------------------------
+function onContaminantChosen(site, contaminant, rows) {
+    const resultContainer = document.getElementById(`trend-${site.site_no}`);
+    if (!resultContainer) return;
+
+    const result = seasonalKendallTest(rows);
+
+    // Chart plots exactly the months the test used — if a month didn't
+    // clear the >=2-years-of-data bar, it won't show up in either place.
+    let chartHTML = "";
+    if (result.ok) {
+        const chartData = computeSeasonalComparisonData(rows, result.usableMonths);
+        chartHTML = `<div class="popup-chart">${renderSeasonalComparisonSVG(chartData, result.usableMonths)}</div>`;
+    }
+
+    resultContainer.innerHTML = chartHTML + renderTrendResultHTML(contaminant, result);
+}
+
+// ---------------------------------------------------------------------
+// Popup: fetches the site's basin CSV, filters to this site, and lists
+// the distinct contaminants (VARIABLE column) measured there.
+// ---------------------------------------------------------------------
+async function populateContaminantDropdown(site, container) {
+    container.innerHTML = '<div class="popup-loading">Loading contaminant list…</div>';
+
+    let allRows;
+    try {
+        allRows = await loadBasinCSV(site.basin_file);
+    } catch (err) {
+        container.innerHTML = `<div class="popup-error">
+            Could not load ${site.basin_file}. Make sure the file exists in
+            wq_basin_data/ and that this page was opened through the server
+            started by <code>python3 generate_map.py</code>.
+        </div>`;
+        return;
+    }
+
+    const siteRows = allRows.filter(r => (r.SITE_NO || "").trim() === site.site_no);
+    if (siteRows.length === 0) {
+        container.innerHTML = '<div class="popup-loading">No measurements found for this site in its basin file.</div>';
+        return;
+    }
+
+    const allContaminants = Array.from(new Set(siteRows.map(r => (r.VARIABLE || "").trim())))
+        .filter(v => v.length > 0)
+        .sort();
+
+    // Only list contaminants that actually clear the Seasonal Kendall
+    // test's data bar (see seasonalKendallTest above — needs >=2 distinct
+    // years of data in at least one calendar month). Anything that
+    // wouldn't produce a result is pulled out of the dropdown and counted
+    // separately instead, so the list only shows choices worth picking.
+    const contaminants = [];
+    const excluded = [];
+    for (const c of allContaminants) {
+        const rows = siteRows.filter(r => (r.VARIABLE || "").trim() === c);
+        const result = seasonalKendallTest(rows);
+        (result.ok ? contaminants : excluded).push(c);
+    }
+
+    const selectId = `contaminant-${site.site_no}`;
+    const excludedListId = `excluded-list-${site.site_no}`;
+    const excludedToggleId = `excluded-toggle-${site.site_no}`;
+
+    const excludedHTML = excluded.length === 0 ? "" : `
+        <div class="popup-excluded-note">
+            <span>${excluded.length} contaminant${excluded.length === 1 ? "" : "s"} excluded (not enough data)</span>
+            <button type="button" class="popup-excluded-toggle" id="${excludedToggleId}">Show</button>
+        </div>
+        <ul class="popup-excluded-list" id="${excludedListId}" style="display:none;">
+            ${excluded.map(c => `<li>${c}</li>`).join("")}
+        </ul>
+    `;
+
+    const dropdownHTML = contaminants.length === 0
+        ? `<div class="popup-loading">No contaminants here have enough data for a trend test.</div>`
+        : `
+        <label class="popup-label" for="${selectId}">Contaminant (${contaminants.length} with enough data)</label>
+        <select id="${selectId}" class="popup-contaminant-select">
+            <option value="">— choose a contaminant —</option>
+            ${contaminants.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join("")}
+        </select>
+    `;
+
+    container.innerHTML = `
+        ${dropdownHTML}
+        ${excludedHTML}
+        <div id="trend-${site.site_no}"></div>
+    `;
+
+    if (excluded.length > 0) {
+        const toggleBtn = document.getElementById(excludedToggleId);
+        const listEl = document.getElementById(excludedListId);
+        toggleBtn.addEventListener('click', () => {
+            const nowHidden = listEl.style.display !== 'none';
+            listEl.style.display = nowHidden ? 'none' : 'block';
+            toggleBtn.textContent = nowHidden ? 'Show' : 'Hide';
+        });
+    }
+
+    if (contaminants.length > 0) {
+        document.getElementById(selectId).addEventListener('change', (e) => {
+            const chosen = e.target.value;
+            if (!chosen) return;
+            const rows = siteRows.filter(r => (r.VARIABLE || "").trim() === chosen);
+            onContaminantChosen(site, chosen, rows);
+        });
+    }
+}
+
+// ---------------------------------------------------------------------
+// Map setup
+// ---------------------------------------------------------------------
+// Keep the view inside Canada's extent (a little padding past the borders):
+// panning/zooming out stops at these edges instead of drifting into the US.
+const CANADA_BOUNDS = L.latLngBounds([[41, -142], [84, -52]]);
+const map = L.map('map', {
+    zoomControl: true,
+    // Required by the marker-cluster plugin: the vector basemap layer does not
+    // declare a max zoom itself, so the map must.
+    maxZoom: 18,
+    maxBounds: CANADA_BOUNDS,
+    maxBoundsViscosity: 1.0,
+}).setView([61, -98], 4);
+function fitMinZoom() { map.setMinZoom(Math.min(map.getBoundsZoom(CANADA_BOUNDS), 4)); }
+fitMinZoom();
+map.on('resize', fitMinZoom);
+
+// OpenFreeMap vector basemap (Positron, light style) rendered by MapLibre GL
+// inside Leaflet. No API key needed. Attribution must stay visible.
+try {
+    L.maplibreGL({
+        style: 'https://tiles.openfreemap.org/styles/positron',
+        attribution: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> &copy; <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+    }).addTo(map);
+} catch (err) {
+    console.error('Basemap failed to initialise:', err);
+    showRuntimeError('Basemap failed to load: ' + err.message);
+}
+
+const clusterGroup = L.markerClusterGroup();
+const markerBySite = {};
+
+function popupHTML(site) {
+    return `
+        <div class="popup-title">${site.site_name}</div>
+        <div class="popup-basin">${site.basin_name}</div>
+        <div class="popup-row"><span class="popup-label">Site No:</span> ${site.site_no}</div>
+        <div class="popup-row"><span class="popup-label">Coordinates:</span> ${site.lat.toFixed(4)}, ${site.lon.toFixed(4)}</div>
+        <div id="contaminants-${site.site_no}" class="popup-data-section"></div>
+    `;
+}
+
+function makeMarker(site) {
+    const marker = L.marker([site.lat, site.lon]);
+    marker.bindPopup(popupHTML(site), { maxWidth: 340, minWidth: 300 });
+
+    marker.on('popupopen', () => {
+        const container = document.getElementById(`contaminants-${site.site_no}`);
+        if (!container) return;
+        populateContaminantDropdown(site, container);
+    });
+
+    markerBySite[site.site_no] = marker;
+    return marker;
+}
+
+SITES.forEach(site => clusterGroup.addLayer(makeMarker(site)));
+map.addLayer(clusterGroup);
+
+// ---------------------------------------------------------------------
+// Basin filter dropdown
+// ---------------------------------------------------------------------
+const basinSelect = document.getElementById('basin-filter');
+BASINS.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b;
+    opt.textContent = b;
+    basinSelect.appendChild(opt);
+});
+
+function updateSiteCount(n) {
+    document.getElementById('site-count').textContent = `Showing ${n} site${n === 1 ? '' : 's'}`;
+}
+updateSiteCount(SITES.length);
+
+basinSelect.addEventListener('change', () => {
+    const chosen = basinSelect.value;
+    clusterGroup.clearLayers();
+    let shown = 0;
+    SITES.forEach(site => {
+        if (chosen === '__all__' || site.basin_name === chosen) {
+            clusterGroup.addLayer(markerBySite[site.site_no]);
+            shown++;
+        }
+    });
+    updateSiteCount(shown);
+});
+</script>
+
+</body>
+</html>
